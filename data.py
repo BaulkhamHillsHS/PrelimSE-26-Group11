@@ -1,5 +1,15 @@
-
+# Constants
+# Subscription Types
 PLAN_1 = 0
+# Scene Ids
+WELCOME = 0
+LOGIN = 1
+HOME = 2
+VIEW = 3
+SUBSCRIBE = 5
+# Genres
+
+
 
 credentials = {
    0 : {
