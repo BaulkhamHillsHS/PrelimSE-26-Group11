@@ -27,4 +27,7 @@ viewing report
  where would we put the viewing history report?
  may in account details or subscription management?
 
+generic scene (main scene?)
+has the header (logo, name, nav buttons) and main content subframe
+
 each frame gets it own build func
