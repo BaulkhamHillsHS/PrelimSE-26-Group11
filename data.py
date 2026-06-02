@@ -1,4 +1,4 @@
-"""
+
 PLAN_1 = 0
 
 credentials = {
@@ -6,7 +6,7 @@ credentials = {
         username : "",
         password : "",
         plan : PLAN_1,
-        credit_card : 1234567891000000
+        credit_card : 1234567891000000,
         profiles : {
             0 : {
                 name : "",
@@ -18,11 +18,10 @@ credentials = {
 }
 
 
-medias = {
+media = {
     0 : {
         title : "",
         type : SHOW
         video : [image, image]
     }
 }
-"""
