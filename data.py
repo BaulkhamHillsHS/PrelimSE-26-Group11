@@ -24,11 +24,12 @@ X = 5
 
 
 credentials = {
-    -100: {
+    0: {
         "username": "Gex",
         "password": "123457890",
         "plan": PLAN_1,
         "credit_card": 1234567891000000,
+        "active_profile": 0,
         "profiles": {0: {"name": "", "age": "", "watchlist": ""}},
     }
 }

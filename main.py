@@ -13,26 +13,29 @@ class SceneManager():
         #   self.ctk_app.buildlogin()
         a = 1
         pass
-
+LOGIN_SUCCESS = 0
+LOGIN_USER_ERR = 1
+LOGIN_PASS_ERR = 2
 class AccountManager():
     def __init__(self) -> None:
         self.profile_count = 0
-        self.current_profile = None
-    def register_user(self):
-        current_profile = 0
-        data.credentials[0] = {
-            "username": "Gex",
-            "password": "123457890",
-            "plan": data.PLAN_1,
-            "credit_card": 1234567891000000,
-            "profiles": {0: {"name": "", "age": "", "watchlist": ""}},
-        }
-        self.profile_count += 1
-    def login(self):
-        pass
+        self.current_account = None
+
+    def login(self, username, password) -> int:
+        for index in data.credentials:
+            if data.credentials[index]["username"] == username:
+                if data.credentials[index]["password"] == password:
+                    self.current_account = index
+                    return LOGIN_SUCCESS
+                else :
+                    return LOGIN_PASS_ERR
+        return LOGIN_USER_ERR
+
     def logout(self):
         pass
     def add_profile(self):
+        pass
+    def set_profile(self):
         pass
 
 class Media():
