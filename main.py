@@ -20,7 +20,10 @@ class StreamingApp(ctk.CTk):
 
     def _build_main(self):
         """Blank usually, just for child classes to inherit and make different"""
-        pass
+        self.frame_main = ctk.CTkFrame(self, width=400, height=200)
+        for i in range(4):
+            ctk.CTkLabel(self.frame_main, text=f"{i}\nthumbnail\nTitle:\nMovie/TV Show:\nLength:\nRating:\nGenre:").pack()
+        self.frame_main.pack()
         #old comments probably good to preserve for documentation
         # add: build main frame - frame.build - each subclass has a different build func ig
         # generic scene -> specific scene which inherits from generic and then polymorphism on build_main()
