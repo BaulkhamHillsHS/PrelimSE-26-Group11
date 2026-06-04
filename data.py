@@ -26,7 +26,7 @@ X = 5
 credentials = {
     0: {
         "username": "Gex",
-        "password": "123457890",
+        "password": "1234567890",
         "plan": PLAN_1,
         "credit_card": 1234567891000000,
         "active_profile": 0,
@@ -36,13 +36,22 @@ credentials = {
 
 
 media = {
-    "example": {
+    -1: {
         "title": "",
-        "type": SHOW,
+        "type": MOVIE,
         "display_path": "path",
         "thumbnail": "path",
         "length_sec": 1000,
         "rating": M,
         "genre": [GEX, THE, GECKO],
-    }
+    },
+    -2: {
+        "title": "",
+        "type": SHOW,
+        "display_path": "path",
+        "thumbnail": ["path", "path2"],
+        "length_sec": 1000,
+        "rating": M,
+        "genre": [GEX, GECKO],
+    },
 }
