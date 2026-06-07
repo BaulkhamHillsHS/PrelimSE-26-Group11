@@ -1,6 +1,4 @@
-from pickle import TRUE
-from shlex import split
-from statistics import median_low
+import csv
 
 import customtkinter as ctk
 from PIL import Image
@@ -39,32 +37,58 @@ class SceneManager:
 
 class AccountManager:
     def __init__(self) -> None:
-        # class enums
+        # class Constants
         self.LOGIN_SUCCESS = 0
         self.LOGIN_USER_ERR = 1
         self.LOGIN_PASS_ERR = 2
+        self.FIELDS = [
+            "index",
+            "username",
+            "password",
+            "plan",
+            "payment",
+            "active_profile",
+            "profiles",
+        ]
         # index of current account
-        self.current_account = -1
+        self.current_account = {}
+        self.accounts = {}
 
     # attempts to login
     def login(self, username, password) -> int:
         for index in data.credentials:
             if data.credentials[index]["username"] == username:
                 if data.credentials[index]["password"] == password:
-                    self.current_account = index
+                    self.current_account = data.credentials[index]
                     return self.LOGIN_SUCCESS
                 else:
                     return self.LOGIN_PASS_ERR
         return self.LOGIN_USER_ERR
 
     def logout(self):
-        self.current_account = -1
+        self.current_account = {}
+        # switch to login screen
 
-    def add_profile(self):
-        pass
+    def set_profile(self, profile):
+        self.current_account["active_profile"] = profile
+        # switch to welcome screen
+        # update content filters
 
-    def set_profile(self):
+    def load_csv(self, path):
+        with open(path, "w", newline="") as csvfile:
+            writer = csv.DictWriter(csvfile, self.FIELDS)
+            writer.writeheader()
+            for key, val in sorted(self.accounts.items()):
+                row = {"index": key}
+                row.update(val)
+                writer.writerow(row)
+
+    def save_csv(self):
         pass
+        with open("accounts.csv", "r", newline="") as csvfile:
+            reader = csv.DictReader(csvfile)
+            for i in reader:
+                print(i)
 
 
 #
@@ -108,33 +132,23 @@ account_manager = AccountManager()
 
 
 def main():
+    account_manager.load_csv("accounts.csv")
     debug_terminal()
 
 
 def debug_terminal():
-    while TRUE:
+    while True:
         while True:
             username = input("enter username : ")
             password = input("enter password : ")
             login_status = account_manager.login(username, password)
             if login_status == account_manager.LOGIN_SUCCESS:
-                print(
-                    f"logged into {data.credentials[account_manager.current_account]['username']}"
-                )
+                print(f"logged into {account_manager.current_account['username']}")
                 break
             elif login_status == account_manager.LOGIN_USER_ERR:
                 print("Incorrect username")
             else:
                 print("Incorrect password")
-        command = input(
-            f"{data.credentials[account_manager.current_account]['username']}>"
-        )
-        command_list = command.split(" ")
-        if len(command_list) <= 0:
-            continue
-        if command_list[0] == "profile":
-            if len(command_list) <= 1:
-                pass
 
 
 if __name__ == "__main__":
