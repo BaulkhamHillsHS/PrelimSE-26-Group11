@@ -9,19 +9,34 @@ import data
 # temporary code for until a gui is made
 class temp:
     def __init__(self) -> None:
-        self.media_list = {}
+        self.media_list = []
         self.visible_list = []
-        for key in data.media:
-            if data.media[key]["Type"] == data.MOVIE:
-                self.media_list[key] = Movie(key)
-            elif data.media[key]["Type"] == data.SHOW:
-                self.media_list[key] = Show(key)
-            self.visible_list.append(key)
-        self.genre_filter = []
-        self.ratings_filter = []
+        for i in range(len(data.media)):
+            media = data.media[i]
+            if media["Type"] == data.MOVIE:
+                self.media_list.append(Movie(i))
+            elif media["Type"] == data.SHOW:
+                self.media_list.append(Show(i))
+            self.visible_list.append(i)
+        self.genre_filter = [data.GEX, data.THE, data.GECKO]
+        self.type_filter = [data.MOVIE, data.SHOW]
+        self.ratings_filter = data.X
 
     def update_visible(self):
-        pass
+        self.visible_list = []
+        for i in range(len(self.media_list)):
+            media = self.media_list[i]
+            if media["rating"] > self.ratings_filter:
+                continue
+            if media["type"] not in self.type_filter:
+                continue
+            for genre in media["genre"]:
+                if genre in self.genre_filter:
+                    break
+            else:
+                continue
+            self.visible_list.append(i)
+        print(self.visible_list)
 
 
 class SceneManager:
@@ -42,7 +57,6 @@ class AccountManager:
         self.LOGIN_USER_ERR = 1
         self.LOGIN_PASS_ERR = 2
         self.FIELDS = [
-            "index",
             "username",
             "password",
             "plan",
@@ -52,14 +66,14 @@ class AccountManager:
         ]
         # index of current account
         self.current_account = {}
-        self.accounts = {}
+        self.accounts = []
 
     # attempts to login
     def login(self, username, password) -> int:
-        for index in data.credentials:
-            if data.credentials[index]["username"] == username:
-                if data.credentials[index]["password"] == password:
-                    self.current_account = data.credentials[index]
+        for account in self.accounts:
+            if account["username"] == username:
+                if account["password"] == password:
+                    self.current_account = account
                     return self.LOGIN_SUCCESS
                 else:
                     return self.LOGIN_PASS_ERR
@@ -74,21 +88,18 @@ class AccountManager:
         # switch to welcome screen
         # update content filters
 
-    def load_csv(self, path):
+    def save_csv(self, path):
         with open(path, "w", newline="") as csvfile:
             writer = csv.DictWriter(csvfile, self.FIELDS)
             writer.writeheader()
-            for key, val in sorted(self.accounts.items()):
-                row = {"index": key}
-                row.update(val)
-                writer.writerow(row)
+            for account in self.accounts:
+                writer.writerow(account)
 
-    def save_csv(self):
-        pass
-        with open("accounts.csv", "r", newline="") as csvfile:
+    def load_csv(self, path):
+        with open(path, "r", newline="") as csvfile:
             reader = csv.DictReader(csvfile)
-            for i in reader:
-                print(i)
+            for row in reader:
+                self.accounts.append(row)
 
 
 #
