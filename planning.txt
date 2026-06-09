@@ -1,0 +1,12 @@
+
+refine HomeScene
+- pass in arguments to the media cards so they display unique content
+ - do this by making a dummy proof-of-concept dictionary or something
+
+add functionality to LoginScene
+- make a command method for the button, or add tk.StringVar's to the entries,
+- or read later in the ctk guide on gc about dialogs etc.
+
+improve Scene
+- improve header by adding the logo image
+- add tabview and add functionality
