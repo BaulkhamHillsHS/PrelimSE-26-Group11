@@ -15,29 +15,54 @@ class StreamingApp(ctk.CTk):
         self._build_ui()
 
     def _build_ui(self):
-        scene = HomeScene(self)
-        scene.pack(fill="both")
+        scene = LoginScene(self)
+        scene.pack(expand=True, fill=ctk.BOTH)
         
 
 class Scene(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
+        self.configure(width=540, height=720)
         self._build_header()
         self._build_main()
 
     def _build_header(self):
         self._frame_header = ctk.CTkFrame(self, width=400, height=200)
+        self._frame_header.pack(fill=ctk.X)
         #self.image = ctk.CTkImage(light_image=Image.open("Gex2Cover.jpg"))
         self.title = ctk.CTkLabel(self._frame_header, text="GEx VIDEos") #, image=self.image)
         self.title.pack()
-        self._frame_header.pack(fill="x")
-
     def _build_main(self):
         """Blank usually, just for child classes to inherit and make different"""
         pass
         #old comments probably good to preserve for documentation
         # add: build main frame - frame.build - each subclass has a different build func ig
         # generic scene -> specific scene which inherits from generic and then polymorphism on build_main()
+
+class LoginScene(Scene):
+    def __init__(self, master):
+        super().__init__(master)
+    def _build_header(self):
+        '''Redefined to empty for the login scene, as the user should not have access to the app functions before logging in.'''
+        pass
+    def _build_main(self):
+        self._frame_main = ctk.CTkFrame(self, width=400, height=400)
+        self._frame_main.pack(expand=True, fill=ctk.Y)
+        self.lbl_title = ctk.CTkLabel(self._frame_main, text="GEx VIDEos", font=("Comic Sans MS", 20))
+        self.lbl_title.pack(expand=True)
+        
+        self.lbl_username = ctk.CTkLabel(self._frame_main, text="Enter Username:")
+        self.lbl_username.pack(anchor=ctk.S)
+        self.ent_username = ctk.CTkEntry(self._frame_main, placeholder_text="eg. Gex T. Gecko")
+        self.ent_username.pack(expand=True)
+        
+        self.lbl_pw = ctk.CTkLabel(self._frame_main, text="Enter Password:")
+        self.lbl_pw.pack(anchor=ctk.S)
+        self.ent_pw = ctk.CTkEntry(self._frame_main, placeholder_text="eg. its_tail_time")
+        self.ent_pw.pack(expand=True)
+        
+        self.btn_login = ctk.CTkButton(self._frame_main, width=200, height=50, text="Start Surfing")
+        self.btn_login.pack(expand=True)
 
 class HomeScene(Scene):
     def __init__(self, master):
