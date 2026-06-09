@@ -1,0 +1,33 @@
+
+login scene
+ - username entry, pw entry, email?2fa*...
+
+profile selection scene
+ - individual profiles in a row - name (could be on button or not), image (label), button, edit button?
+
+browse/search scene
+ - search bar, content library*, filters
+
+play content scene
+ - static image?
+
+watchlist
+ - probably best as separate scene
+
+subscription management
+ - details - textbox?, tier buttons that allow change of plan type (thus upgrade/downgrade)
+ - probably best as separate scene
+ - would this include subscription plan report textbox? 
+
+account credentials
+ - does this need to be viewable on frontend?
+ - account details should be its own scene if so
+
+viewing report
+ where would we put the viewing history report?
+ may in account details or subscription management?
+
+generic scene (main scene?)
+has the header (logo, name, nav buttons) and main content subframe
+
+each frame gets it own build func
