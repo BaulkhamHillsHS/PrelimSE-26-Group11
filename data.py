@@ -1,4 +1,3 @@
-
 # Constants
 # Subscription Types
 PLAN_1 = 0
@@ -23,24 +22,34 @@ MA = 3
 R = 4
 X = 5
 
+plans = {"base_plan": {"monthly_price": 9.99}, "premium_plan": {"monthly_price": 19.99}}
 
 media = [
-    -1: {
-        "title": "",
+    {
+        "title": "Gex 1 Intro Cutscene",
         "type": MOVIE,
         "display_path": "path",
         "thumbnail": "path",
         "length_sec": 1000,
-        "rating": M,
+        "rating": G,
         "genre": [GEX, THE, GECKO],
     },
-    -2: {
-        "title": "",
+    {
+        "title": "Gex 1 Ending Cutscene",
+        "type": MOVIE,
+        "display_path": "path",
+        "thumbnail": "path",
+        "length_sec": 1000,
+        "rating": G,
+        "genre": [GEX, THE, GECKO],
+    },
+    {
+        "title": "Gex 1 compilation",
         "type": SHOW,
         "display_path": "path",
         "thumbnail": ["path", "path2"],
         "length_sec": 1000,
-        "rating": M,
+        "rating": G,
         "genre": [GEX, GECKO],
-    }
+    },
 ]

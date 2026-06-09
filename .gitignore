@@ -1,1 +1,3 @@
 .zed/
+.gitignore
+__pycache__/

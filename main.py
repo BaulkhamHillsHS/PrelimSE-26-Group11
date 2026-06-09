@@ -1,4 +1,5 @@
 import csv
+import time
 
 import customtkinter as ctk
 from PIL import Image
@@ -8,6 +9,7 @@ import data
 
 # temporary code for until a gui is made
 class temp:
+    # will be part of the main window
     def __init__(self) -> None:
         self.media_list = []
         self.visible_list = []
@@ -39,6 +41,19 @@ class temp:
         print(self.visible_list)
 
 
+class LogManager:
+    def __init__(self) -> None:
+        self.log_txt = "log.txt"
+
+    def add_viewing_activity(self, media) -> None:
+        with open("self.log_txt", "a") as f:
+            f.write(f"{time.time} : watched {media['name']}")
+
+    def add_subscription_activity(self) -> None:
+        pass
+
+
+# will depricate
 class SceneManager:
     def __init__(self, ctk_app: ctk.CTk):
         self.ctk_app = ctk_app
@@ -88,6 +103,10 @@ class AccountManager:
         # switch to welcome screen
         # update content filters
 
+    def set_plan(self, plan):
+        self.current_account["plan"] = plan
+        # notify log manager(plan)
+
     def save_csv(self, path):
         with open(path, "w", newline="") as csvfile:
             writer = csv.DictWriter(csvfile, self.FIELDS)
@@ -96,6 +115,7 @@ class AccountManager:
                 writer.writerow(account)
 
     def load_csv(self, path):
+        self.accounts = []
         with open(path, "r", newline="") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
