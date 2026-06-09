@@ -15,7 +15,7 @@ class StreamingApp(ctk.CTk):
         self._build_ui()
 
     def _build_ui(self):
-        scene = Scene(self)
+        scene = HomeScene(self)
         scene.pack(fill="both")
         
 
@@ -34,14 +34,21 @@ class Scene(ctk.CTkFrame):
 
     def _build_main(self):
         """Blank usually, just for child classes to inherit and make different"""
-        self._frame_main = ctk.CTkFrame(self, width=400, height=200)
-        for i in range(4):
-            ctk.CTkLabel(self._frame_main, text=f"{i}\nthumbnail\nTitle:\nMovie/TV Show:\nLength:\nRating:\nGenre:").pack()
-        self._frame_main.pack()
+        pass
         #old comments probably good to preserve for documentation
         # add: build main frame - frame.build - each subclass has a different build func ig
         # generic scene -> specific scene which inherits from generic and then polymorphism on build_main()
-    
+
+class HomeScene(Scene):
+    def __init__(self, master):
+        super().__init__(master)
+    def _build_main(self):
+        # currently builds a pack of labels with different metadata
+        self._frame_main = ctk.CTkFrame(self, width=400, height=200)
+        self._frame_main.pack()
+        for i in range(4):
+            ctk.CTkLabel(self._frame_main, text=f"{i}\nthumbnail\nTitle:\nMovie/TV Show:\nLength:\nRating:\nGenre:").pack()
+
 if __name__ == "__main__":
     app = StreamingApp()
     app.mainloop()
