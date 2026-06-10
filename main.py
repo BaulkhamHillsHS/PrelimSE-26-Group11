@@ -1,5 +1,5 @@
 import csv
-import time
+import datetime
 
 import customtkinter as ctk
 from PIL import Image
@@ -13,6 +13,7 @@ ctk.set_default_color_theme("dark-blue")
 class Media:
     def __init__(self, id: int) -> None:
         m_data = data.media[id]
+        self.id = id  # this should also be its index when in the home scene
         self.title = m_data["title"]
         self.display_path = m_data["display_path"]
         self.thumbnail = m_data["thumbnail"]
@@ -101,6 +102,27 @@ class AccountManager:
                 self.accounts.append(row)
 
 
+class LogManager:
+    def __init__(self, account_manager: AccountManager) -> None:
+        self.path = "log.txt"
+        self.account_manager: AccountManager = account_manager
+
+    def add_viewing_activity(self, media) -> None:
+        with open(self.path, "a") as f:
+            f.write(
+                f"{datetime.datetime.now()} : {self.account_manager.current_account['username']} watched {media.title}\n"
+            )
+
+    def add_subscription_activity(self, current_plan, new_plan) -> None:
+        with open(self.path, "a") as f:
+            f.write(f"""Invoice for change in subscription plan
+Account name : {self.account_manager.current_account["username"]}
+Payment Credentials : {self.account_manager.current_account["playment"]}
+Old Plan : {data.plans[current_plan]["name"]} @ {data.plans[current_plan]["price"]}/month
+New Plan : {data.plans[new_plan]["name"]} @ {data.plans[new_plan]["price"]}/month
+""")
+
+
 class StreamingApp(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -115,6 +137,7 @@ class StreamingApp(ctk.CTk):
         # managers
         self.account_manager = AccountManager()
         self.account_manager.load_csv("accounts.csv")
+        self.log_manager = LogManager(self.account_manager)
 
         self.title("WIP Streaming App Jeremy Guillermo")
         self.geometry("720x540")
@@ -122,7 +145,7 @@ class StreamingApp(ctk.CTk):
 
         self.scenes: dict[int, Scene] = {
             self.LOGIN: LoginScene(self, self.account_manager),
-            self.HOME: HomeScene(self),
+            self.HOME: HomeScene(self, self.log_manager),
         }
 
         self.cached_scenes = []
@@ -222,9 +245,10 @@ class LoginScene(Scene):
 
 
 class HomeScene(Scene):
-    def __init__(self, master):
+    def __init__(self, master, log_manager):
         super().__init__(master)
-        self.media_list = []
+        self.log_manager: LogManager = log_manager
+        self.media_list: list[Media] = []
         self.visible_list = []
         for i in range(len(data.media)):
             media = data.media[i]
@@ -241,11 +265,20 @@ class HomeScene(Scene):
         # currently builds a pack of labels with different metadata
         self._frame_main = ctk.CTkFrame(self, width=400, height=200)
         self._frame_main.pack()
-        for i in range(4):
+        for i in range(len(self.media_list)):
             ctk.CTkLabel(
                 self._frame_main,
                 text=f"{i}\nthumbnail\nTitle:\nMovie/TV Show:\nLength:\nRating:\nGenre:",
             ).pack()
+            ctk.CTkButton(
+                self._frame_main,
+                text=self.media_list[i].title,
+                command=lambda media=self.media_list[i]: self.media_clicked(media),
+            ).pack()
+
+    def media_clicked(self, media):
+        self.log_manager.add_viewing_activity(media)
+        # switch to viewing scene(media)
 
     def update_visible(self):
         self.visible_list = []
@@ -267,27 +300,6 @@ class HomeScene(Scene):
 if __name__ == "__main__":
     app = StreamingApp()
     app.mainloop()
-
-
-class LogManager:
-    def __init__(self, account_manager: AccountManager) -> None:
-        self.log_txt = "log.txt"
-        self.account_manager: AccountManager = account_manager
-
-    def add_viewing_activity(self, media) -> None:
-        with open("self.log_txt", "a") as f:
-            f.write(
-                f"{time.time} : {self.account_manager.current_account['username']} watched {media['name']}"
-            )
-
-    def add_subscription_activity(self, current_plan, new_plan) -> None:
-        with open("self.log_txt", "a") as f:
-            f.write(f"""Invoice for change in subscription plan
-Account name : {self.account_manager.current_account["username"]}
-Payment Credentials : {self.account_manager.current_account["playment"]}
-Old Plan : {data.plans[current_plan]["name"]} @ {data.plans[current_plan]["price"]}/month
-New Plan : {data.plans[new_plan]["name"]} @ {data.plans[new_plan]["price"]}/month
-""")
 
 
 #
