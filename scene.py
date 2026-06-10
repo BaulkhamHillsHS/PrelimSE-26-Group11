@@ -9,13 +9,19 @@ class Scene(ctk.CTkFrame):
         self._build_main()
 
     def _build_header(self):
+        '''Build the logo and navigation bar at the top of the screen that is in most scenes in the app.'''
+        # add frame and configure grid inside frame
         self._frame_header = ctk.CTkFrame(self, width=400, height=200)
         self._frame_header.pack(fill=ctk.X)
         self._frame_header.rowconfigure(0, weight=1)
         self._frame_header.columnconfigure((0,1,2), weight=1)
+        
+        # load image and display logo label containing image
         self.img_logo = ctk.CTkImage(light_image=Image.open("images/Gex2Cover.jpg"), size=(80,80))
+        # text=' ' (single space) to not display default 'CTkLabel' text on label
         self.lbl_logo = ctk.CTkLabel(self._frame_header, text=' ', image=self.img_logo)
         self.lbl_logo.grid(row=0, column=0)
+        
         self.lbl_title = ctk.CTkLabel(self._frame_header, text="GEx VIDEos", font=("Comic Sans MS", 20))
         self.lbl_title.grid(row=0, column=1, sticky='w')
         
@@ -33,6 +39,7 @@ class LoginScene(Scene):
         '''Redefined to empty for the login scene, as the user should not have access to the app functions before logging in.'''
         pass
     def _build_main(self):
+        '''Build a simple username and password form with a title and button.'''
         self._frame_main = ctk.CTkFrame(self, width=400, height=400)
         self._frame_main.pack(expand=True, fill=ctk.Y)
         self.lbl_title = ctk.CTkLabel(self._frame_main, text="GEx VIDEos", font=("Comic Sans MS", 20))
