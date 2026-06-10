@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from PIL import Image
 
 class Scene(ctk.CTkFrame):
     def __init__(self, master):
@@ -10,9 +11,14 @@ class Scene(ctk.CTkFrame):
     def _build_header(self):
         self._frame_header = ctk.CTkFrame(self, width=400, height=200)
         self._frame_header.pack(fill=ctk.X)
-        #self.image = ctk.CTkImage(light_image=Image.open("Gex2Cover.jpg"))
-        self.title = ctk.CTkLabel(self._frame_header, text="GEx VIDEos") #, image=self.image)
-        self.title.pack()
+        self._frame_header.rowconfigure(0, weight=1)
+        self._frame_header.columnconfigure((0,1,2), weight=1)
+        self.img_logo = ctk.CTkImage(light_image=Image.open("images/Gex2Cover.jpg"), size=(80,80))
+        self.lbl_logo = ctk.CTkLabel(self._frame_header, text=' ', image=self.img_logo)
+        self.lbl_logo.grid(row=0, column=0)
+        self.lbl_title = ctk.CTkLabel(self._frame_header, text="GEx VIDEos", font=("Comic Sans MS", 20))
+        self.lbl_title.grid(row=0, column=1, sticky='w')
+        
     def _build_main(self):
         """Blank usually, just for child classes to inherit and make different"""
         pass

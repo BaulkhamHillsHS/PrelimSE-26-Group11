@@ -18,7 +18,7 @@ class StreamingApp(ctk.CTk):
         self._build_ui()
 
     def _build_ui(self):
-        scene = LoginScene(self)
+        scene = HomeScene(self)
         scene.pack(expand=True, fill=ctk.BOTH)
 
 if __name__ == "__main__":
