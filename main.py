@@ -54,11 +54,13 @@ class AccountManager:
         self.LOGIN_PASS_ERR = 2
         self.FIELDS = [
             "username",
+            "email",
             "password",
             "plan",
             "payment",
             "active_profile",
             "profiles",
+            "watchlist",
         ]
         # index of current account
         self.current_account = {}
@@ -67,12 +69,12 @@ class AccountManager:
     # attempts to login
     def login(self, username, password) -> int:
         for account in self.accounts:
-            if account["username"] == username:
-                if account["password"] == password:
-                    self.current_account = account
-                    return self.LOGIN_SUCCESS
-                else:
-                    return self.LOGIN_PASS_ERR
+            if account["username"] != username and account["email"] != username:
+                continue
+            if account["password"] != password:
+                self.current_account = account
+                return self.LOGIN_PASS_ERR
+            return self.LOGIN_SUCCESS
         return self.LOGIN_USER_ERR
 
     def logout(self):
@@ -100,6 +102,9 @@ class AccountManager:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 self.accounts.append(row)
+
+    def append_csv(self, path):
+        pass
 
 
 class LogManager:
