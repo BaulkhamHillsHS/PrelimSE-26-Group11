@@ -1,10 +1,12 @@
 import csv
 import datetime
+from ast import literal_eval
 
 import customtkinter as ctk
 from PIL import Image
 
 import data
+import encryption
 
 ctk.set_appearance_mode("system")
 ctk.set_default_color_theme("dark-blue")
@@ -60,7 +62,6 @@ class AccountManager:
             "payment",
             "active_profile",
             "profiles",
-            "watchlist",
         ]
         # index of current account
         self.current_account = {}
@@ -71,7 +72,8 @@ class AccountManager:
         for account in self.accounts:
             if account["username"] != username and account["email"] != username:
                 continue
-            if account["password"] != password:
+            if encryption.decrypt(account["password"]).decode("utf-8") != password:
+                print(encryption.decrypt(account["password"])[2:-1], password)
                 self.current_account = account
                 return self.LOGIN_PASS_ERR
             return self.LOGIN_SUCCESS
@@ -101,10 +103,20 @@ class AccountManager:
         with open(path, "r", newline="") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
+                row["username"] = str(row["username"])
+                row["email"] = str(row["email"])
+                row["password"] = literal_eval(row["password"])
+                row["plan"] = int(row["plan"])
+                row["payment"] = str(row["payment"])
+                row["active_profile"] = int(row["active_profile"])
+                row["profiles"] = list(row["profiles"])
+
                 self.accounts.append(row)
 
-    def append_csv(self, path):
-        pass
+    def append_csv(self, path, new_account):
+        with open(path, "a", newline="") as csvfile:
+            writer = csv.DictWriter(csvfile, self.FIELDS)
+            writer.writerow(new_account)
 
 
 class LogManager:
