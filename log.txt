@@ -1,0 +1,4 @@
+2026-06-11 13:53:37.971851 : a watched Gex 1 Intro Cutscene
+2026-06-11 13:53:39.031271 : a watched Gex 1 Ending Cutscene
+2026-06-11 13:53:39.529902 : a watched Gex 1 Ending Cutscene
+2026-06-11 13:53:40.521681 : a watched Gex 1 compilation

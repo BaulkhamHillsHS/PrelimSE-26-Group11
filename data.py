@@ -46,8 +46,8 @@ media = [
     {
         "title": "Gex 1 compilation",
         "type": SHOW,
-        "display_path": "path",
-        "thumbnail": ["path", "path2"],
+        "display_path": ["path", "path2"],
+        "thumbnail": "path",
         "length_sec": 1000,
         "rating": G,
         "genre": [GEX, GECKO],

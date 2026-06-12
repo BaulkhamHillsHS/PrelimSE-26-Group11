@@ -1,10 +1,12 @@
 import csv
-import time
+import datetime
+from ast import literal_eval
 
 import customtkinter as ctk
 from PIL import Image
 
 import data
+import encryption
 from scene import *
 
 ctk.set_appearance_mode("system")
@@ -93,6 +95,7 @@ class AccountManager:
         self.LOGIN_PASS_ERR = 2
         self.FIELDS = [
             "username",
+            "email",
             "password",
             "plan",
             "payment",
@@ -106,12 +109,13 @@ class AccountManager:
     # attempts to login
     def login(self, username, password) -> int:
         for account in self.accounts:
-            if account["username"] == username:
-                if account["password"] == password:
-                    self.current_account = account
-                    return self.LOGIN_SUCCESS
-                else:
-                    return self.LOGIN_PASS_ERR
+            if account["username"] != username and account["email"] != username:
+                continue
+            if encryption.decrypt(account["password"]).decode("utf-8") != password:
+                print(encryption.decrypt(account["password"])[2:-1], password)
+                self.current_account = account
+                return self.LOGIN_PASS_ERR
+            return self.LOGIN_SUCCESS
         return self.LOGIN_USER_ERR
 
     def logout(self):
@@ -139,7 +143,20 @@ class AccountManager:
         with open(path, "r", newline="") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
+                row["username"] = str(row["username"])
+                row["email"] = str(row["email"])
+                row["password"] = literal_eval(row["password"])
+                row["plan"] = int(row["plan"])
+                row["payment"] = str(row["payment"])
+                row["active_profile"] = int(row["active_profile"])
+                row["profiles"] = list(row["profiles"])
+
                 self.accounts.append(row)
+
+    def append_csv(self, path, new_account):
+        with open(path, "a", newline="") as csvfile:
+            writer = csv.DictWriter(csvfile, self.FIELDS)
+            writer.writerow(new_account)
 
 
 #
