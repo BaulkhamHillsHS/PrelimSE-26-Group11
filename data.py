@@ -1,8 +1,12 @@
 # Constants
 # Subscription Types
-BASE_PLAN = 0
-PREMIUM_PLAN = 1
-
+PLAN_1 = 0
+# Scene Ids
+WELCOME = 0
+LOGIN = 1
+HOME = 2
+VIEW = 3
+SUBSCRIBE = 5
 # Genres
 GEX = 0
 THE = 1
@@ -18,10 +22,7 @@ MA = 3
 R = 4
 X = 5
 
-plans = {
-    BASE_PLAN: {"name": "Base Plan", "monthly_price": 9.99},
-    PREMIUM_PLAN: {"name": "Base Plan", "monthly_price": 19.99},
-}
+plans = {"base_plan": {"monthly_price": 9.99}, "premium_plan": {"monthly_price": 19.99}}
 
 media = [
     {
