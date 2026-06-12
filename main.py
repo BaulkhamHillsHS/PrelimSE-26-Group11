@@ -17,11 +17,16 @@ class StreamingApp(ctk.CTk):
         super().__init__()
         self.title("WIP Streaming App Jeremy Guillermo")
         self.geometry("720x540")
-        self._build_ui()
-
-    def _build_ui(self):
-        scene = HomeScene(self)
-        scene.pack(expand=True, fill=ctk.BOTH)
+        # set a scene first and switch it to avoid a bug and avoid making a one-use method
+        self.scene = Scene(self)
+        self._switch_ui(LoginScene)
+    
+    def _switch_ui(self, scene_type):
+        '''Remove previous scene from the screen, change scene and display it on the screen.
+        A widget within the previous scene calls and passes in the arguments for this method.'''
+        self.scene.pack_forget()
+        self.scene = scene_type(self)
+        self.scene.pack(expand=True, fill=ctk.BOTH)
 
 if __name__ == "__main__":
     app = StreamingApp()
