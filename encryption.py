@@ -15,7 +15,9 @@ def decrypt(token: bytes) -> bytes:
     return Fernet(key).decrypt(token)
 
 
-"""
+print(encrypt("Append".encode()))
+
+""" Original passwords
 print(encrypt("1234567890".encode()))
 print(encrypt("1234567890".encode()))
 print(encrypt("a".encode()))

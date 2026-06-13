@@ -1,6 +1,7 @@
 # Constants
 # Subscription Types
-PLAN_1 = 0
+BASE_PLAN = 0
+PREMIUM_PLAN = 1
 # Scene Ids
 WELCOME = 0
 LOGIN = 1
@@ -14,13 +15,13 @@ GECKO = 2
 # types
 SHOW = 0
 MOVIE = 1
-# ratings
+# ratings assigned to their minimum age (inclusive)
 G = 0
-PG = 1
-M = 2
-MA = 3
-R = 4
-X = 5
+PG = 13  # PG and M can techniquely be freely accessed but
+M = 15  # implementing parental guidance options is not in
+MA = 15  # the scope of this project
+R = 18
+X = 18
 
 plans = {"base_plan": {"monthly_price": 9.99}, "premium_plan": {"monthly_price": 19.99}}
 
