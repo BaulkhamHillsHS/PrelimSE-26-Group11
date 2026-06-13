@@ -2,6 +2,7 @@
 # Subscription Types
 BASE_PLAN = 0
 PREMIUM_PLAN = 1
+
 # Scene Ids
 WELCOME = 0
 LOGIN = 1
@@ -54,3 +55,39 @@ media = [
         "genre": [GEX, GECKO],
     },
 ]
+
+
+class Media:
+    def __init__(self, id: int) -> None:
+
+        self.id = id
+        self.title = media[id]["title"]
+        self.display_path = media[id]["display_path"]
+        self.thumbnail = media[id]["thumbnail"]
+        self.length_sec = media[id]["length_sec"]
+        self.rating = media[id]["rating"]
+        self.genre = media[id]["genre"]
+
+    def build_card(self) -> None:
+        pass
+
+    def card_pressed(self) -> None:
+        pass
+
+
+class Movie(Media):
+    def __init__(self, id):
+        super().__init__(id)
+        # self.display = ctk.CTkImage(
+        #    light_image=Image.open(self.display_path), size=(30, 30)
+        # )
+
+
+class Show(Media):
+    def __init__(self, id):
+        super().__init__(id)
+        self.display = []
+        # for path in self.display_path:
+        #    self.display.append(
+        #        ctk.CTkImage(light_image=Image.open(path), size=(30, 30))
+        #    )

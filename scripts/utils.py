@@ -1,16 +1,13 @@
+# file to store utilities like managers
 import csv
 import datetime
 from ast import literal_eval
 
 import customtkinter as ctk
+import encryption
 from PIL import Image
 
 import data
-import encryption
-import scene
-
-ctk.set_appearance_mode("system")
-ctk.set_default_color_theme("dark-blue")
 
 
 class AccountManager:
@@ -19,7 +16,7 @@ class AccountManager:
         self.LOGIN_SUCCESS = 0
         self.LOGIN_USER_ERR = 1
         self.LOGIN_PASS_ERR = 2
-        self.CSV_PATH = "accounts.csv"
+        self.CSV_PATH = "data/accounts.csv"
         self.FIELDS = [
             "username",
             "email",
@@ -104,7 +101,7 @@ class AccountManager:
 
 class LogManager:
     def __init__(self, account_manager: AccountManager) -> None:
-        self.path = "log.txt"
+        self.path = "data/log.txt"
         self.account_manager: AccountManager = account_manager
 
     def add_viewing_activity(self, media) -> None:
@@ -130,9 +127,9 @@ class MediaManager:
         for i in range(len(data.media)):
             media = data.media[i]
             if media["type"] == data.MOVIE:
-                self.media_list.append(Movie(i))
+                self.media_list.append(data.Movie(i))
             elif media["type"] == data.SHOW:
-                self.media_list.append(Show(i))
+                self.media_list.append(data.Show(i))
             self.visible_list.append(i)
         self.genre_filter = [data.GEX, data.THE, data.GECKO]
         self.type_filter = [data.MOVIE, data.SHOW]
@@ -152,86 +149,3 @@ class MediaManager:
             else:
                 continue
             self.visible_list.append(i)
-
-
-class Media:
-    def __init__(self, id: int) -> None:
-        m_data = data.media[id]
-        self.id = id
-        self.title = m_data["title"]
-        self.display_path = m_data["display_path"]
-        self.thumbnail = m_data["thumbnail"]
-        self.length_sec = m_data["length_sec"]
-        self.rating = m_data["rating"]
-        self.genre = m_data["genre"]
-
-    def build_card(self) -> None:
-        pass
-
-    def card_pressed(self) -> None:
-        pass
-
-
-class Movie(Media):
-    def __init__(self, id):
-        super().__init__(id)
-        # self.display = ctk.CTkImage(
-        #    light_image=Image.open(self.display_path), size=(30, 30)
-        # )
-
-
-class Show(Media):
-    def __init__(self, id):
-        super().__init__(id)
-        self.display = []
-        # for path in self.display_path:
-        #    self.display.append(
-        #        ctk.CTkImage(light_image=Image.open(path), size=(30, 30))
-        #    )
-
-
-class StreamingApp(ctk.CTk):
-    def __init__(self):
-        super().__init__()
-        # Scene Ids
-        self.NONE = -1
-        self.WELCOME = 0
-        self.LOGIN = 1
-        self.HOME = 2
-        self.VIEW = 3
-        self.SUBSCRIBE = 5
-
-        # managers
-        self.account_manager = AccountManager()
-        self.account_manager.load_csv()
-        self.log_manager = LogManager(self.account_manager)
-        self.media_manager = MediaManager()
-
-        self.title("WIP Streaming App Jeremy Guillermo")
-        self.geometry("720x540")
-        self.current_scene = self.NONE
-
-        self.scenes: dict[int, scene.Scene] = {
-            self.LOGIN: scene.LoginScene(self, self.account_manager),
-            self.HOME: scene.HomeScene(self, self.log_manager, self.media_manager),
-        }
-
-        self.cached_scenes = []
-        # scenes that have been loaded in that can be simply reloaded with pack() or grid() instead
-        # of instantiating a new object
-        self.switch_scene(self.LOGIN)
-
-    def switch_scene(self, scene_id):
-        # currentrly scene must use pack
-        # extra logic for grid can be added later
-        #
-        if self.current_scene != self.NONE:
-            self.scenes[self.current_scene].destroy()
-        self.scenes[scene_id].build_frame()
-        self.scenes[scene_id].pack()
-        self.current_scene = scene_id
-
-
-if __name__ == "__main__":
-    app = StreamingApp()
-    app.mainloop()

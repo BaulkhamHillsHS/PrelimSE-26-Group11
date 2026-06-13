@@ -43,7 +43,7 @@ class Scene(ctk.CTkFrame):
 
         # load image and display logo label containing image
         self.img_logo = ctk.CTkImage(
-            light_image=Image.open("images/Gex2Cover.jpg"), size=(80, 80)
+            light_image=Image.open("data/images/Gex2Cover.jpg"), size=(80, 80)
         )
         # text=' ' (single space) to not display default 'CTkLabel' text on label
         self.lbl_logo = ctk.CTkLabel(self._frame_header, text=" ", image=self.img_logo)
@@ -131,7 +131,8 @@ class AccountScene(Scene):
         # currently builds a pack of labels with different metadata
         self._frame_main = ctk.CTkFrame(self, width=400, height=200)
         self._frame_main.pack()
-        for i in range(len(self.account_manager.cu)):
+        account = self.account_manager.current_account
+        for i in range(len()):
             ctk.CTkLabel(
                 self._frame_main,
                 text=f"{i}\nthumbnail\nTitle:\nMovie/TV Show:\nLength:\nRating:\nGenre:",
