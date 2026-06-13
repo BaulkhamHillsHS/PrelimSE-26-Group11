@@ -3,11 +3,7 @@ import csv
 import datetime
 from ast import literal_eval
 
-import customtkinter as ctk
-import encryption
-from PIL import Image
-
-import data
+from scripts import data, encryption
 
 
 class AccountManager:
@@ -29,19 +25,6 @@ class AccountManager:
         # index of current account
         self.current_account = {}
         self._accounts = []
-        """
-        append_test_account = {
-            "username": "Aupen_D_Teszd",
-            "email": "aupen.teszd@gmail.com",
-            "password": "b'gAAAAABqLUAW6jgMaaVp2I3VHapsXqb87kTx7720GtpynBb92X_QNPLbwGfsecwxrVD8yyGkmYqd1_Hg5v4Y5zPo9fvBk-0jSA=='",
-            "plan": data.PREMIUM_PLAN,
-            "payment": "1234567890",
-            "active_profile": 0,
-            "profiles": [{"name": "Aupen ", "age": 20, "watchlist": [0, 1, 2]}],
-        }
-        self._accounts.append(append_test_account)
-        self.append_csv(append_test_account)
-        """
 
     # attempts to login
     def login(self, username, password) -> int:
@@ -102,19 +85,19 @@ class AccountManager:
 class LogManager:
     def __init__(self, account_manager: AccountManager) -> None:
         self.path = "data/log.txt"
-        self.account_manager: AccountManager = account_manager
+        self.acc_man: AccountManager = account_manager
 
     def add_viewing_activity(self, media) -> None:
         with open(self.path, "a") as f:
             f.write(
-                f"{datetime.datetime.now()} : {self.account_manager.current_account['username']} watched {media.title}\n"
+                f"{datetime.datetime.now()} : {self.acc_man.current_account['username']} watched {media.title}\n"
             )
 
     def add_subscription_activity(self, current_plan, new_plan) -> None:
         with open(self.path, "a") as f:
             f.write(f"""Invoice for change in subscription plan
-Account name : {self.account_manager.current_account["username"]}
-Payment Credentials : {self.account_manager.current_account["playment"]}
+Account name : {self.acc_man.current_account["username"]}
+Payment Credentials : {self.acc_man.current_account["playment"]}
 Old Plan : {data.plans[current_plan]["name"]} @ {data.plans[current_plan]["price"]}/month
 New Plan : {data.plans[new_plan]["name"]} @ {data.plans[new_plan]["price"]}/month
 """)
@@ -124,6 +107,7 @@ class MediaManager:
     def __init__(self) -> None:
         self.media_list = []
         self.visible_list = []
+
         for i in range(len(data.media)):
             media = data.media[i]
             if media["type"] == data.MOVIE:
@@ -131,6 +115,7 @@ class MediaManager:
             elif media["type"] == data.SHOW:
                 self.media_list.append(data.Show(i))
             self.visible_list.append(i)
+
         self.genre_filter = [data.GEX, data.THE, data.GECKO]
         self.type_filter = [data.MOVIE, data.SHOW]
         self.ratings_filter = data.X
@@ -149,3 +134,18 @@ class MediaManager:
             else:
                 continue
             self.visible_list.append(i)
+
+
+""" appending example
+append_test_account = {
+    "username": "Aupen_D_Teszd",
+    "email": "aupen.teszd@gmail.com",
+    "password": "b'gAAAAABqLUAW6jgMaaVp2I3VHapsXqb87kTx7720GtpynBb92X_QNPLbwGfsecwxrVD8yyGkmYqd1_Hg5v4Y5zPo9fvBk-0jSA=='",
+    "plan": data.PREMIUM_PLAN,
+    "payment": "1234567890",
+    "active_profile": 0,
+    "profiles": [{"name": "Aupen ", "age": 20, "watchlist": [0, 1, 2]}],
+}
+self._accounts.append(append_test_account)
+self.append_csv(append_test_account)
+"""

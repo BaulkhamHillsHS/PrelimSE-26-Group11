@@ -26,6 +26,7 @@ X = 18
 
 plans = {"base_plan": {"monthly_price": 9.99}, "premium_plan": {"monthly_price": 19.99}}
 
+# need to replace "path"s with image paths
 media = [
     {
         "title": "Gex 1 Intro Cutscene",
@@ -53,6 +54,15 @@ media = [
         "length_sec": 1000,
         "rating": G,
         "genre": [GEX, GECKO],
+    },
+    {
+        "title": "Hardcore Gex",
+        "type": MOVIE,
+        "display_path": ["path"],
+        "thumbnail": "path",
+        "length_sec": 1000,
+        "rating": X,
+        "genre": [GEX],
     },
 ]
 
