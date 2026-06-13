@@ -15,7 +15,6 @@ def decrypt(token: bytes) -> bytes:
     return Fernet(key).decrypt(token)
 
 
-print(encrypt("Baulko11!!".encode()))
 """
 print(encrypt("1234567890".encode()))
 print(encrypt("1234567890".encode()))
