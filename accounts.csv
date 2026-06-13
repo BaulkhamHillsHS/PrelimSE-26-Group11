@@ -1,5 +1,5 @@
 username,email,password,plan,payment,active_profile,profiles
-Gex,gex@crystaldynamics.com,b'gAAAAABqKsDdrk1xcnwSY89hr_TMUqAhpf4-ZssRyDZu_kchstIFDzJJ4ngz428REF4nWHogrQExvFD2twoGg9c09dw3pqc89Q==',0,1234567891000000,0,"[{'name': 'I love Gex', 'rating': '', 'watchlist': [0,1,2]}]
+Gex,gex@crystaldynamics.com,b'gAAAAABqKsDdrk1xcnwSY89hr_TMUqAhpf4-ZssRyDZu_kchstIFDzJJ4ngz428REF4nWHogrQExvFD2twoGg9c09dw3pqc89Q==',0,1234567891000000,0,"[{'name': 'I love Gex', 'rating': '', 'watchlist': [0,1,2]}]"
 Gex2,gex@gmail.com,b'gAAAAABqKsDdrk1xcnwSY89hr_TMUqAhpf4-ZssRyDZu_kchstIFDzJJ4ngz428REF4nWHogrQExvFD2twoGg9c09dw3pqc89Q==',0,123453467891000000,0,"[{'name': 'I lo4354ve Gex', 'rating': '', 'watchlist': [1,2]}]"
-a,a@a.a,b'gAAAAABqKsmPGJbNApOJ1Tva19g1VzWXAIodq8NsojIjDROmfofyeDfB40pulIXzoxi8R6GCkgiiqEuzMDB8qIbP8AKnXMzVBg==',0,123453467891000000,0,"[{'name': 'I lo4354ve Gex', 'rating': '', 'watchlist': []}]"
+a,a@a.a,b'gAAAAABqKsmPGJbNApOJ1Tva19g1VzWXAIodq8NsojIjDROmfofyeDfB40pulIXzoxi8R6GCkgiiqEuzMDB8qIbP8AKnXMzVBg==',0,123453467891000000,0,"[{'name': 'aaaa', 'rating': '', 'watchlist': []}]"
 MrDunne,ryan.dunne9@det.nsw.edu.au,b'gAAAAABqKsnIyd30Sg3o3MeTdDlNI6UIOgYCdMx4FTCshGhHluadi7v8FA0rRb9IdpSc2WoSrRekDnrzpWc_gt3jKZRBFTpO-A==',1,123453467891000000,0,"[{'name': 'I lo4354ve Gex', 'rating': '', 'watchlist': []}, {'name': 'I lo4354ve Gex', 'rating': '', 'watchlist': []}]"

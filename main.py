@@ -7,89 +7,10 @@ from PIL import Image
 
 import data
 import encryption
-from scene import *
+import scene
 
 ctk.set_appearance_mode("system")
 ctk.set_default_color_theme("dark-blue")
-
-class StreamingApp(ctk.CTk):
-    def __init__(self):
-        super().__init__()
-        self.title("WIP Streaming App Jeremy Guillermo")
-        self.geometry("720x540")
-        # set a scene first and switch it to avoid a bug and avoid making a one-use method
-        self.scene = Scene(self)
-        self._switch_ui(LoginScene)
-    
-    def _switch_ui(self, scene_type):
-        '''Remove previous scene from the screen, change scene and display it on the screen.
-        A widget within the previous scene calls and passes in the arguments for this method.'''
-        self.scene.pack_forget()
-        self.scene = scene_type(self)
-        self.scene.pack(expand=True, fill=ctk.BOTH)
-
-if __name__ == "__main__":
-    app = StreamingApp()
-    app.mainloop()
-
-
-
-# temporary code for until a gui is made
-class temp:
-    # will be part of the main window
-    def __init__(self) -> None:
-        self.media_list = []
-        self.visible_list = []
-        for i in range(len(data.media)):
-            media = data.media[i]
-            if media["Type"] == data.MOVIE:
-                self.media_list.append(Movie(i))
-            elif media["Type"] == data.SHOW:
-                self.media_list.append(Show(i))
-            self.visible_list.append(i)
-        self.genre_filter = [data.GEX, data.THE, data.GECKO]
-        self.type_filter = [data.MOVIE, data.SHOW]
-        self.ratings_filter = data.X
-
-    def update_visible(self):
-        self.visible_list = []
-        for i in range(len(self.media_list)):
-            media = self.media_list[i]
-            if media["rating"] > self.ratings_filter:
-                continue
-            if media["type"] not in self.type_filter:
-                continue
-            for genre in media["genre"]:
-                if genre in self.genre_filter:
-                    break
-            else:
-                continue
-            self.visible_list.append(i)
-        print(self.visible_list)
-
-
-class LogManager:
-    def __init__(self) -> None:
-        self.log_txt = "log.txt"
-
-    def add_viewing_activity(self, media) -> None:
-        with open("self.log_txt", "a") as f:
-            f.write(f"{time.time} : watched {media['name']}")
-
-    def add_subscription_activity(self) -> None:
-        pass
-
-
-# will depricate
-class SceneManager:
-    def __init__(self, ctk_app: ctk.CTk):
-        self.ctk_app = ctk_app
-
-    def switch_scene(self, scene, *args) -> None:
-        # match LOGIN:
-        #   self.ctk_app.buildlogin()
-        a = 1
-        pass
 
 
 class AccountManager:
@@ -117,9 +38,8 @@ class AccountManager:
             if account["username"] != username and account["email"] != username:
                 continue
             if encryption.decrypt(account["password"]).decode("utf-8") != password:
-                print(encryption.decrypt(account["password"])[2:-1], password)
-                self.current_account = account
                 return self.LOGIN_PASS_ERR
+            self.current_account = account
             return self.LOGIN_SUCCESS
         return self.LOGIN_USER_ERR
 
@@ -154,7 +74,7 @@ class AccountManager:
                 row["plan"] = int(row["plan"])
                 row["payment"] = str(row["payment"])
                 row["active_profile"] = int(row["active_profile"])
-                row["profiles"] = list(row["profiles"])
+                row["profiles"] = literal_eval(row["profiles"])
 
                 self.accounts.append(row)
 
@@ -164,10 +84,62 @@ class AccountManager:
             writer.writerow(new_account)
 
 
-#
+class LogManager:
+    def __init__(self, account_manager: AccountManager) -> None:
+        self.path = "log.txt"
+        self.account_manager: AccountManager = account_manager
+
+    def add_viewing_activity(self, media) -> None:
+        with open(self.path, "a") as f:
+            f.write(
+                f"{datetime.datetime.now()} : {self.account_manager.current_account['username']} watched {media.title}\n"
+            )
+
+    def add_subscription_activity(self, current_plan, new_plan) -> None:
+        with open(self.path, "a") as f:
+            f.write(f"""Invoice for change in subscription plan
+Account name : {self.account_manager.current_account["username"]}
+Payment Credentials : {self.account_manager.current_account["playment"]}
+Old Plan : {data.plans[current_plan]["name"]} @ {data.plans[current_plan]["price"]}/month
+New Plan : {data.plans[new_plan]["name"]} @ {data.plans[new_plan]["price"]}/month
+""")
+
+
+class MediaManager:
+    def __init__(self) -> None:
+        self.media_list = []
+        self.visible_list = []
+        for i in range(len(data.media)):
+            media = data.media[i]
+            if media["type"] == data.MOVIE:
+                self.media_list.append(Movie(i))
+            elif media["type"] == data.SHOW:
+                self.media_list.append(Show(i))
+            self.visible_list.append(i)
+        self.genre_filter = [data.GEX, data.THE, data.GECKO]
+        self.type_filter = [data.MOVIE, data.SHOW]
+        self.ratings_filter = data.X
+
+    def update_visible(self):
+        self.visible_list = []
+        for i in range(len(self.media_list)):
+            media = self.media_list[i]
+            if media["rating"] > self.ratings_filter:
+                continue
+            if media["type"] not in self.type_filter:
+                continue
+            for genre in media["genre"]:
+                if genre in self.genre_filter:
+                    break
+            else:
+                continue
+            self.visible_list.append(i)
+
+
 class Media:
-    def __init__(self, id) -> None:
+    def __init__(self, id: int) -> None:
         m_data = data.media[id]
+        self.id = id
         self.title = m_data["title"]
         self.display_path = m_data["display_path"]
         self.thumbnail = m_data["thumbnail"]
@@ -184,46 +156,64 @@ class Media:
 
 class Movie(Media):
     def __init__(self, id):
-        super.__init__(id)
-        self.display = ctk.CTkImage(
-            light_image=Image.open(self.display_path), size=(30, 30)
-        )
+        super().__init__(id)
+        # self.display = ctk.CTkImage(
+        #    light_image=Image.open(self.display_path), size=(30, 30)
+        # )
 
 
 class Show(Media):
     def __init__(self, id):
-        super.__init__(id)
+        super().__init__(id)
         self.display = []
-        for path in self.display_path:
-            self.display.append(
-                ctk.CTkImage(light_image=Image.open(path), size=(30, 30))
-            )
+        # for path in self.display_path:
+        #    self.display.append(
+        #        ctk.CTkImage(light_image=Image.open(path), size=(30, 30))
+        #    )
 
 
-# scene_manager = SceneManager()
-account_manager = AccountManager()
+class StreamingApp(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        # Scene Ids
+        self.NONE = -1
+        self.WELCOME = 0
+        self.LOGIN = 1
+        self.HOME = 2
+        self.VIEW = 3
+        self.SUBSCRIBE = 5
 
-"""
-def main():
-    account_manager.load_csv("accounts.csv")
-    debug_terminal()
+        # managers
+        self.account_manager = AccountManager()
+        self.account_manager.load_csv("accounts.csv")
+        self.log_manager = LogManager(self.account_manager)
+        self.media_manager = MediaManager()
 
+        self.title("WIP Streaming App Jeremy Guillermo")
+        self.geometry("720x540")
+        self.current_scene = self.NONE
 
-def debug_terminal():
-    while True:
-        while True:
-            username = input("enter username : ")
-            password = input("enter password : ")
-            login_status = account_manager.login(username, password)
-            if login_status == account_manager.LOGIN_SUCCESS:
-                print(f"logged into {account_manager.current_account['username']}")
-                break
-            elif login_status == account_manager.LOGIN_USER_ERR:
-                print("Incorrect username")
-            else:
-                print("Incorrect password")
+        self.scenes: dict[int, scene.Scene] = {
+            self.LOGIN: scene.LoginScene(self, self.account_manager),
+            self.HOME: scene.HomeScene(self, self.log_manager, self.media_manager),
+        }
+
+        self.cached_scenes = []
+        # scenes that have been loaded in that can be simply reloaded with pack() or grid() instead
+        # of instantiating a new object
+        self.switch_scene(self.LOGIN)
+
+    def switch_scene(self, scene_id):
+        # currentrly scene must use pack
+        # extra logic for grid can be added later
+        #
+        if self.current_scene != self.NONE:
+            self.scenes[self.current_scene].destroy()
+        self.scenes[scene_id].build_frame()
+        self.scenes[scene_id].pack()
+        self.current_scene = scene_id
 
 
 if __name__ == "__main__":
-    main()
-"""
+    app = StreamingApp()
+    app.mainloop()
