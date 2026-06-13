@@ -4,6 +4,25 @@ from PIL import Image
 import data
 
 
+class Navbar(ctk.CTkFrame):
+    """Navigation bar containing buttons with links to different scenes."""
+
+    def __init__(self, master):
+        super().__init__(master)
+        self.btn_logout = ctk.CTkButton(self, text="Log Out", command=self.click_logout)
+        self.btn_logout.grid(row=0, column=0)
+        self.btn_home = ctk.CTkButton(self, text="Home", command=self.click_home)
+        self.btn_home.grid(row=0, column=1)
+
+    # yes, these are hardcoded. don't ask me how long I wasted trying to avoid this
+    def click_logout(self):
+        # Navbar runs command, master-> _frame_header, master->Scene subclass, master->StreamingApp
+        self.master.master.master._switch_ui(LoginScene)
+
+    def click_home(self):
+        self.master.master.master._switch_ui(HomeScene)
+
+
 class Scene(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
@@ -34,8 +53,12 @@ class Scene(ctk.CTkFrame):
         )
         self.lbl_title.grid(row=0, column=1, sticky="w")
 
+        # the navbar and its button elements which link to other scenes
+        self.navbar = Navbar(self._frame_header)
+        self.navbar.grid(row=0, column=2)
+
     def _build_main(self):
-        """Blank usually, just for child classes to inherit and make different"""
+        """Blank usually, just for child classes to inherit and make different."""
         pass
         # old comments probably good to preserve for documentation
         # add: build main frame - frame.build - each subclass has a different build func ig
@@ -53,7 +76,7 @@ class LoginScene(Scene):
         pass
 
     def _build_main(self):
-        """Build a simple username and password form with a title and button."""
+        """Build a simple username and password form with a title and a button that links to HomeScene."""
         self._frame_main = ctk.CTkFrame(self, width=400, height=400)
         self._frame_main.pack(expand=True, fill=ctk.Y)
         self.lbl_title = ctk.CTkLabel(
