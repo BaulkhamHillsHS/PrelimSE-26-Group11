@@ -1,6 +1,6 @@
 import customtkinter as ctk
-
-from scripts import scene, utils
+import scene
+import utils
 
 ctk.set_appearance_mode("system")
 ctk.set_default_color_theme("dark-blue")

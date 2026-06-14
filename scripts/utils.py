@@ -3,7 +3,9 @@ import csv
 import datetime
 from ast import literal_eval
 
-from scripts import data, encryption
+import encryption
+
+import data
 
 
 class AccountManager:
