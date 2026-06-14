@@ -33,13 +33,16 @@ class StreamingApp(ctk.CTk):
             self.HOME: scene.HomeScene(self, self.log_manager, self.media_manager),
             self.PROFILE: scene.OpeningProfileScene(self, self.account_manager),
         }
+        self.cached_scenes = []
 
         self.switch_scene(self.LOGIN)
 
     def switch_scene(self, scene_id):
         if self.current_scene != self.NONE:
-            self.scenes[self.current_scene].destroy()
-        self.scenes[scene_id].build_frame()
+            self.scenes[self.current_scene].pack_forget()
+        if scene_id not in self.cached_scenes:
+            self.cached_scenes.append(scene_id)
+            self.scenes[scene_id].build_frame()
         self.scenes[scene_id].pack()
         self.current_scene = scene_id
 
