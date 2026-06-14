@@ -16,17 +16,41 @@ class Navbar(ctk.CTkFrame):
     # yes, these are hardcoded. don't ask me how long I wasted trying to avoid this
     def click_logout(self):
         # Navbar runs command, master-> _frame_header, master->Scene subclass, master->StreamingApp
-        self.stream_app._switch_ui(LoginScene)
+        self.stream_app.switch_scene(self.stream_app.LOGIN)
 
     def click_home(self):
-        self.stream_app._switch_ui(HomeScene)
+        self.stream_app.switch_scene(self.stream_app.HOME)
 
+class Header(ctk.CTkFrame):
+    def __init__(self, scene, app):
+        super().__init__(master=scene)
+        self.app = app
+        self.configure(width=400, height=200)
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure((0,1,2), weight=1)
+        
+        # load image and display logo label containing image
+        self.img_logo = ctk.CTkImage(
+            light_image=Image.open("data/images/Gex2Cover.jpg"), size=(80, 80)
+        )
+        # text=' ' (single space) to not display default 'CTkLabel' text on label
+        self.lbl_logo = ctk.CTkLabel(self, text=" ", image=self.img_logo)
+        self.lbl_logo.grid(row=0, column=0)
+
+        self.lbl_title = ctk.CTkLabel(
+            self, text="GEx VIDEos", font=("Comic Sans MS", 20)
+        )
+        self.lbl_title.grid(row=0, column=1, sticky="w")
+
+        # the navbar and its button elements which link to other scenes
+        self.navbar = Navbar(self, self.app)
+        self.navbar.grid(row=0, column=2)
 
 class Scene(ctk.CTkFrame):
-    def __init__(self, master):
-        super().__init__(master)
+    def __init__(self, app):
+        super().__init__(master=app)
+        self.app = app
         self.configure(width=540, height=720)
-        self.app = master
 
     def build_frame(self):
         self._build_header()
@@ -35,27 +59,8 @@ class Scene(ctk.CTkFrame):
     def _build_header(self):
         """Build the logo and navigation bar at the top of the screen that is in most scenes in the app."""
         # add frame and configure grid inside frame
-        self._frame_header = ctk.CTkFrame(self, width=400, height=200)
+        self._frame_header = Header(self, self.app)
         self._frame_header.pack(fill=ctk.X)
-        self._frame_header.rowconfigure(0, weight=1)
-        self._frame_header.columnconfigure((0, 1, 2), weight=1)
-
-        # load image and display logo label containing image
-        self.img_logo = ctk.CTkImage(
-            light_image=Image.open("data/images/Gex2Cover.jpg"), size=(80, 80)
-        )
-        # text=' ' (single space) to not display default 'CTkLabel' text on label
-        self.lbl_logo = ctk.CTkLabel(self._frame_header, text=" ", image=self.img_logo)
-        self.lbl_logo.grid(row=0, column=0)
-
-        self.lbl_title = ctk.CTkLabel(
-            self._frame_header, text="GEx VIDEos", font=("Comic Sans MS", 20)
-        )
-        self.lbl_title.grid(row=0, column=1, sticky="w")
-
-        # the navbar and its button elements which link to other scenes
-        self.navbar = Navbar(self._frame_header, self.master)
-        self.navbar.grid(row=0, column=2)
 
     def _build_main(self):
         """Blank usually, just for child classes to inherit and make different."""
