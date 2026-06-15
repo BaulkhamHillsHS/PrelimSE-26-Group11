@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from PIL import Image
-import utils
+from utils import *
 
 class Navbar(ctk.CTkFrame):
     """Navigation bar containing buttons with links to different scenes."""
@@ -47,12 +47,18 @@ class Header(ctk.CTkFrame):
         self.navbar = Navbar(self, self.app)
         self.navbar.grid(row=0, column=2)
 
-
+# based on state design pattern
 class Scene(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
         self.configure(width=540, height=720)
         self.app = master
+
+    def enter_scene(self):
+        pass
+
+    def exit_scene(self):
+        pass
 
     def build_frame(self):
         self._build_header()
@@ -92,9 +98,14 @@ class Scene(ctk.CTkFrame):
 
 
 class LoginScene(Scene):
-    def __init__(self, master, account_manager):
-        self.acc_man = account_manager
+    def __init__(self, master, account_manager : AccountManager):
+        self.acc_man : AccountManager = account_manager
         super().__init__(master)
+
+    def enter_scene(self):
+        self.ent_username.set("")
+        self.ent_pw.set("")
+        self.lbl_error.configure(text = "")
 
     def _build_header(self):
         """Redefined to empty for the login scene, as the user should not have access to the app functions before logging in."""
@@ -104,25 +115,22 @@ class LoginScene(Scene):
         """Build a simple username and password form with a title and a button that links to HomeScene."""
         self._frame_main = ctk.CTkFrame(self, width=400, height=400)
         self._frame_main.pack(expand=True, fill=ctk.Y)
-        self.lbl_title = ctk.CTkLabel(
-            self._frame_main, text="GEx VIDEos", font=("Comic Sans MS", 20)
-        )
+        self.lbl_title = ctk.CTkLabel(self._frame_main, text="GEx VIDEos", font=("Comic Sans MS", 20))
         self.lbl_title.pack(expand=True)
 
+        # Username
         self.lbl_username = ctk.CTkLabel(self._frame_main, text="Enter Username:")
         self.lbl_username.pack(anchor=ctk.S)
-        self.ent_username = ctk.CTkEntry(
-            self._frame_main, placeholder_text="eg. Gex T. Gecko"
-        )
+        self.ent_username = ctk.CTkEntry(self._frame_main, placeholder_text="eg. Gex T. Gecko")
         self.ent_username.pack(expand=True)
 
+        # Password
         self.lbl_pw = ctk.CTkLabel(self._frame_main, text="Enter Password:")
         self.lbl_pw.pack(anchor=ctk.S)
-        self.ent_pw = ctk.CTkEntry(
-            self._frame_main, placeholder_text="eg. its_tail_time"
-        )
+        self.ent_pw = ctk.CTkEntry(self._frame_main, placeholder_text="eg. its_tail_time")
         self.ent_pw.pack(expand=True)
 
+        # login button
         self.btn_login = ctk.CTkButton(
             self._frame_main,
             width=200,
@@ -132,15 +140,18 @@ class LoginScene(Scene):
         )
         self.btn_login.pack(expand=True)
 
+        # error message
+        self.lbl_error = ctk.CTkLabel(self._frame_main, text="", text_color="red")
+        self.lbl_error.pack(expand=True)
+
     def login_button_clicked(self):
         login_status = self.acc_man.login(self.ent_username.get(), self.ent_pw.get())
         if login_status == self.acc_man.LOGIN_SUCCESS:
-            print("yippee")
             self.app.switch_scene(self.app.PROFILE)
         if login_status == self.acc_man.LOGIN_USER_ERR:
-            print("wring user  | ", self.ent_username.get())
+            self.lbl_error.configure(text = "Invalid username")
         if login_status == self.acc_man.LOGIN_PASS_ERR:
-            print("password wrong")
+            self.lbl_error.configure(text = "Invalid password")
 
 
 class OpeningProfileScene(Scene):
@@ -191,9 +202,10 @@ class AccountScene(Scene):
 
 
 class HomeScene(Scene):
-    def __init__(self, master, log_manager, media_manager):
+    def __init__(self, master, log_manager, media_manager, account_manager):
         self.log_man = log_manager
-        self.med_man = media_manager
+        self.med_man : MediaManager = media_manager
+        self.acc_man : AccountManager = account_manager
         super().__init__(master)
 
     def _build_main(self):

@@ -30,21 +30,27 @@ class StreamingApp(ctk.CTk):
 
         self.scenes: dict[int, scene.Scene] = {
             self.LOGIN: scene.LoginScene(self, self.account_manager),
-            self.HOME: scene.HomeScene(self, self.log_manager, self.media_manager),
+            self.HOME: scene.HomeScene(self, self.log_manager, self.media_manager,self.account_manager),
             self.PROFILE: scene.OpeningProfileScene(self, self.account_manager),
         }
         self.cached_scenes = []
 
         self.switch_scene(self.LOGIN)
 
+    # basically just a state machine
     def switch_scene(self, scene_id):
+        # currently scenes must use pack() to build
+        # initial case
         if self.current_scene != self.NONE:
+            self.scenes[self.current_scene].exit_scene()
             self.scenes[self.current_scene].pack_forget()
+        #adds new scene to cached list
         if scene_id not in self.cached_scenes:
             self.cached_scenes.append(scene_id)
             self.scenes[scene_id].build_frame()
         self.scenes[scene_id].pack()
         self.current_scene = scene_id
+        self.scenes[self.current_scene].enter_scene()
 
 
 if __name__ == "__main__":
