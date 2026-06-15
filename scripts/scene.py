@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from PIL import Image
-
+import utils
 
 class Navbar(ctk.CTkFrame):
     """Navigation bar containing buttons with links to different scenes."""

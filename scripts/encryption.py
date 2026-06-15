@@ -15,6 +15,13 @@ def decrypt(token: bytes) -> bytes:
     return Fernet(key).decrypt(token)
 
 
+def validate_password(token: bytes, password: str):
+    print(decrypt(token), password.encode())
+    if decrypt(token) == password.encode():
+        return True
+    return False
+
+
 """ Original passwords
 print(encrypt("1234567890".encode()))
 print(encrypt("1234567890".encode()))

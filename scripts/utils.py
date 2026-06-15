@@ -15,28 +15,21 @@ class AccountManager:
         self.LOGIN_USER_ERR = 1
         self.LOGIN_PASS_ERR = 2
         self.CSV_PATH = "data/accounts.csv"
-        self.FIELDS = [
-            "username",
-            "email",
-            "password",
-            "plan",
-            "payment",
-            "active_profile",
-            "profiles",
-        ]
+        self.FIELDS = ["username", "email", "password", "plan", "payment", "profiles"]
         # index of current account
         self.current_account = {}
         self._accounts = []
+        self._profile = 0
 
     # attempts to login
     def login(self, username, password) -> int:
         for account in self._accounts:
             if account["username"] != username and account["email"] != username:
                 continue
-            if encryption.decrypt(account["password"]).decode("utf-8") != password:
-                return self.LOGIN_PASS_ERR
-            self.current_account = account
-            return self.LOGIN_SUCCESS
+            if encryption.validate_password(account["password"], password):
+                self.current_account = account
+                return self.LOGIN_SUCCESS
+            return self.LOGIN_PASS_ERR
         return self.LOGIN_USER_ERR
 
     def logout(self):
@@ -47,6 +40,9 @@ class AccountManager:
         self.current_account["active_profile"] = profile
         # switch to welcome screen
         # update content filters
+
+    def get_active_profile(self):
+        return self.current_account["profiles"][self._profile]
 
     def set_plan(self, plan):
         self.current_account["plan"] = plan
