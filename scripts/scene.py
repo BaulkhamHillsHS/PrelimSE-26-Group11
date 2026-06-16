@@ -21,6 +21,7 @@ class Navbar(ctk.CTkFrame):
     def click_home(self):
         self.stream_app.switch_scene(self.stream_app.HOME)
 
+
 class Header(ctk.CTkFrame):
     def __init__(self, scene, app):
         super().__init__(master=scene)
