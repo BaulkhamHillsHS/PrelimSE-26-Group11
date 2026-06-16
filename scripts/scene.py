@@ -21,6 +21,11 @@ class Navbar(ctk.CTkFrame):
     def click_home(self):
         self.stream_app.switch_scene(self.stream_app.HOME)
 
+class FilterBar(ctk.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+        # empty for now - add later
+        
 
 class Header(ctk.CTkFrame):
     def __init__(self, scene, app):
@@ -177,22 +182,27 @@ class HomeScene(Scene):
         super().__init__(master)
 
     def _build_main(self):
-        # currently builds a pack of labels with different metadata
         self._frame_main = ctk.CTkFrame(self, width=400, height=200)
         self._frame_main.pack()
-        for i in range(len(self.med_man.media_list)):
-            ctk.CTkLabel(
-                self._frame_main,
-                text=f"{i}\nthumbnail\nTitle:\nMovie/TV Show:\nLength:\nRating:\nGenre:",
-            ).pack()
-            ctk.CTkButton(
-                self._frame_main,
-                text=self.med_man.media_list[i].title,
-                # lambda so the the command can pass a parameter
-                command=lambda media=self.med_man.media_list[i]: self.media_clicked(
-                    media
-                ),
-            ).pack()
+        self.filter_bar = FilterBar(self._frame_main)
+        self.filter_bar.pack()
+        # build a pack of labels with metadata about their media, and their watch buttons
+        for media in self.med_man.media_list:
+            # this should be removed when real genres get implemented
+            genres = []
+            for genre in media.genre:
+                genres.append(str(genre))
+            text = f"""{media.title}
+{media.length_sec} seconds
+{media.rating} or above only
+{' '.join(genres)}"""
+            label = ctk.CTkLabel(self._frame_main, text=text)
+            label.pack()
+            
+            button = ctk.CTkButton(self._frame_main, text=media.title,
+                        # lambda so that the command can pass a parameter
+                        command=lambda media=media: self.media_clicked(media))
+            button.pack()
 
     def media_clicked(self, media):
         self.log_man.add_viewing_activity(media)
