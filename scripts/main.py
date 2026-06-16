@@ -22,7 +22,7 @@ class StreamingApp(ctk.CTk):
         self.account_manager = utils.AccountManager()
         self.account_manager.load_csv()
         self.log_manager = utils.LogManager(self.account_manager)
-        self.media_manager = utils.MediaManager()
+        self.media_manager = utils.MediaManager(self.account_manager)
 
         self.title("WIP Streaming App Jeremy Guillermo")
         self.geometry("720x540")
@@ -32,6 +32,8 @@ class StreamingApp(ctk.CTk):
             self.LOGIN: scene.LoginScene(self, self.account_manager),
             self.HOME: scene.HomeScene(self, self.log_manager, self.media_manager,self.account_manager),
             self.PROFILE: scene.OpeningProfileScene(self, self.account_manager),
+            self.VIEW: scene.ViewMediaScene(self, self.media_manager),
+            self.ACCOUNT: scene.AccountScene(self, self.account_manager)
         }
         self.cached_scenes = []
 
@@ -48,9 +50,9 @@ class StreamingApp(ctk.CTk):
         if scene_id not in self.cached_scenes:
             self.cached_scenes.append(scene_id)
             self.scenes[scene_id].build_frame()
+        self.scenes[scene_id].enter_scene()
         self.scenes[scene_id].pack()
         self.current_scene = scene_id
-        self.scenes[self.current_scene].enter_scene()
 
 
 if __name__ == "__main__":

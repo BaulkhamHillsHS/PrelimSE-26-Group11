@@ -22,3 +22,15 @@
 2026-06-14 01:23:16.233633 : a watched Gex 1 Intro Cutscene
 2026-06-14 01:23:17.057168 : a watched Gex 1 Ending Cutscene
 2026-06-14 01:23:17.625151 : a watched Gex 1 compilation
+2026-06-15 21:27:29.797864 : Gex2 watched Hardcore Gex
+2026-06-16 01:40:46.607957 : a watched Gex 1 Intro Cutscene
+2026-06-16 01:40:47.786292 : a watched Hardcore Gex
+2026-06-16 01:56:27.688903 : a watched Gex 1 Intro Cutscene
+2026-06-16 01:56:49.296369 : a watched Gex 1 Intro Cutscene
+2026-06-16 02:00:31.000392 : a watched Gex 1 Intro Cutscene
+2026-06-16 02:00:36.870551 : a watched Gex 1 compilation
+2026-06-16 02:00:41.567302 : a watched Hardcore Gex
+2026-06-16 02:02:19.984699 : a watched Gex 1 compilation
+2026-06-16 02:02:22.229783 : a watched Gex 1 Intro Cutscene
+2026-06-16 02:02:23.982533 : a watched Gex 1 Ending Cutscene
+2026-06-16 02:02:26.204520 : a watched Hardcore Gex

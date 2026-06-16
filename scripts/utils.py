@@ -102,15 +102,17 @@ New Plan : {data.plans[new_plan]["name"]} @ {data.plans[new_plan]["price"]}/mont
 
 
 class MediaManager:
-    def __init__(self) -> None:
+    def __init__(self, account_manager : AccountManager) -> None:
         self.media_list = []
         self.visible_list = []
+        self.acc_man : AccountManager = account_manager
+        self.current_viewed : int
 
         for i in range(len(data.media)):
-            media = data.media[i]
-            if media["type"] == data.MOVIE:
+            media_data = data.media[i]
+            if media_data["type"] == data.MOVIE:
                 self.media_list.append(data.Movie(i))
-            elif media["type"] == data.SHOW:
+            elif media_data["type"] == data.SHOW:
                 self.media_list.append(data.Show(i))
             self.visible_list.append(i)
 
@@ -119,14 +121,17 @@ class MediaManager:
         self.ratings_filter = data.X
 
     def update_visible(self):
+        # update filters
+        self.ratings_filter = self.acc_man.get_active_profile()["age"]
+        # update list
         self.visible_list = []
         for i in range(len(self.media_list)):
-            media = self.media_list[i]
-            if media["rating"] > self.ratings_filter:
+            media : data.Media = self.media_list[i]
+            if media.rating > self.ratings_filter:
                 continue
-            if media["type"] not in self.type_filter:
+            if media.type not in self.type_filter:
                 continue
-            for genre in media["genre"]:
+            for genre in media.genre:
                 if genre in self.genre_filter:
                     break
             else:

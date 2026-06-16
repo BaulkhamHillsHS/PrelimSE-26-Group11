@@ -12,6 +12,8 @@ class Navbar(ctk.CTkFrame):
         self.btn_logout.grid(row=0, column=0)
         self.btn_home = ctk.CTkButton(self, text="Home", command=self.click_home)
         self.btn_home.grid(row=0, column=1)
+        self.btn_account = ctk.CTkButton(self, text="Account", command=self.click_account)
+        self.btn_account.grid(row=0, column=2)
 
     # yes, these are hardcoded. don't ask me how long I wasted trying to avoid this
     def click_logout(self):
@@ -20,6 +22,9 @@ class Navbar(ctk.CTkFrame):
 
     def click_home(self):
         self.stream_app.switch_scene(self.stream_app.HOME)
+
+    def click_account(self):
+        self.stream_app.switch_scene(self.stream_app.ACCOUNT)
 
 
 class Header(ctk.CTkFrame):
@@ -102,10 +107,6 @@ class LoginScene(Scene):
         self.acc_man : AccountManager = account_manager
         super().__init__(master)
 
-    def enter_scene(self):
-        self.ent_username.set("")
-        self.ent_pw.set("")
-        self.lbl_error.configure(text = "")
 
     def _build_header(self):
         """Redefined to empty for the login scene, as the user should not have access to the app functions before logging in."""
@@ -152,6 +153,10 @@ class LoginScene(Scene):
             self.lbl_error.configure(text = "Invalid username")
         if login_status == self.acc_man.LOGIN_PASS_ERR:
             self.lbl_error.configure(text = "Invalid password")
+    def enter_scene(self):
+        self.lbl_error.configure(text = "")
+        self.ent_username.set("")
+        self.ent_pw.set("")
 
 
 class OpeningProfileScene(Scene):
@@ -207,37 +212,66 @@ class HomeScene(Scene):
         self.med_man : MediaManager = media_manager
         self.acc_man : AccountManager = account_manager
         super().__init__(master)
+        self._list_frame = ctk.CTkScrollableFrame(self, width=380, height=700)
+        
+
+    def enter_scene(self):
+        if self.acc_man.current_account != {}:
+            self.med_man.update_visible()
+            print(self.med_man.visible_list)
+            self._build_list()
+        else:
+            raise ValueError("Entered homescene without an account")
+    def _build_list(self):
+        self._list_frame.destroy()
+        self._list_frame = ctk.CTkScrollableFrame(self._frame_main, width=380, height=700)
+        for index in self.med_man.visible_list:
+            ctk.CTkLabel(
+                self._list_frame,
+                text=f"{index}\nthumbnail\nTitle:\nMovie/TV Show:\nLength:\nRating:\nGenre:",
+            ).pack()
+            ctk.CTkButton(
+                self._list_frame,
+                text=self.med_man.media_list[index].title,
+                # lambda so the the command can pass a parameter
+                command=lambda media_index=index: self.media_clicked(
+                    media_index
+                ),
+            ).pack()
+        self._list_frame.pack()
+    def _build_main(self):
+        # currently builds a pack of labels with different metadata
+        self._frame_main = ctk.CTkFrame(self, width=400, height=720)
+        self._frame_main.pack()
+        
+        self._build_list()
+
+    def media_clicked(self, media_id):
+        self.log_man.add_viewing_activity(self.med_man.media_list[media_id])
+        self.med_man.current_viewed = media_id
+        self.app.switch_scene(self.app.VIEW)
+        # switch to viewing scene(media)
+    
+    #todo
+    def add_watchlist_clicked(self):
+        self.acc_man.get_active_profile()["watchlist"].append("")
+
+
+class ViewMediaScene(Scene):
+    def __init__(self, master, media_manager):
+        self.med_man : MediaManager = media_manager
+        super().__init__(master)
+
+    def enter_scene(self):
+        self.test.configure(text=self.med_man.media_list[self.med_man.current_viewed].title)
 
     def _build_main(self):
         # currently builds a pack of labels with different metadata
-        self._frame_main = ctk.CTkFrame(self, width=400, height=200)
-        self._frame_main.pack()
-        for i in range(len(self.med_man.media_list)):
-            ctk.CTkLabel(
-                self._frame_main,
-                text=f"{i}\nthumbnail\nTitle:\nMovie/TV Show:\nLength:\nRating:\nGenre:",
-            ).pack()
-            ctk.CTkButton(
-                self._frame_main,
-                text=self.med_man.media_list[i].title,
-                # lambda so the the command can pass a parameter
-                command=lambda media=self.med_man.media_list[i]: self.media_clicked(
-                    media
-                ),
-            ).pack()
+        self.test = ctk.CTkLabel(self, text=self.med_man.media_list[self.med_man.current_viewed].title)
+        self.test.pack()
 
-    def media_clicked(self, media):
-        self.log_man.add_viewing_activity(media)
-        # switch to viewing scene(media)
-
-
-class ViewMovieScene(Scene):
-    pass
-
-
-class ViewShowScene(Scene):
-    pass
-
+    def media_clicked(self, profile):
+        pass
 
 class PlanScene(Scene):
     pass

@@ -77,6 +77,7 @@ class Media:
         self.length_sec = media[id]["length_sec"]
         self.rating = media[id]["rating"]
         self.genre = media[id]["genre"]
+        self.type = media[id]["type"]
 
     def build_card(self) -> None:
         pass
