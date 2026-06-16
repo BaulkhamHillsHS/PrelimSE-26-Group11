@@ -40,7 +40,7 @@ class StreamingApp(ctk.CTk):
         if self.current_scene != self.NONE:
             self.scenes[self.current_scene].destroy()
         self.scenes[scene_id].build_frame()
-        self.scenes[scene_id].pack()
+        self.scenes[scene_id].pack(expand=True, fill=ctk.BOTH)
         self.current_scene = scene_id
 
 
