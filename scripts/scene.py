@@ -181,13 +181,16 @@ class OpeningProfileScene(Scene):
         pass
 
     def profile_clicked(self, profile):
-        self.acc_man.current_account["active_profile"] = profile
+        print("profiles clicked : ", profile)
+        self.acc_man.set_profile(profile)
         self.app.switch_scene(self.app.HOME)
 
 
 class AccountScene(Scene):
     def __init__(self, master, account_manager):
-        self.acc_man = account_manager
+        self.acc_man : AccountManager = account_manager
+        self.profile_buttons = []
+        self.plan_buttons = []
         super().__init__(master)
 
     def _build_main(self):
@@ -195,15 +198,58 @@ class AccountScene(Scene):
         self._frame_main = ctk.CTkFrame(self, width=400, height=200)
         self._frame_main.pack()
         account = self.acc_man.current_account
+
+        self.lbl_account = ctk.CTkLabel(self._frame_main, text=account["username"]).pack()
+        #profile
+        self.lbl_profiles = ctk.CTkLabel(self._frame_main, text="profiles").pack()
+        #profile buttons
         for i in range(len(account["profiles"])):
-            ctk.CTkButton(
+            if account["profiles"][i] == self.acc_man.get_active_profile():
+                ctk.CTkButton(
                 self._frame_main,
                 text=account["profiles"][i]["name"],
-                command=lambda media=account["profiles"][i]: self.media_clicked(media),
-            ).pack()
+                command=lambda media=i: self.media_clicked(media),
+                state="disabled"
+                ).pack()
+            else:
+                ctk.CTkButton(
+                    self._frame_main,
+                    text=account["profiles"][i]["name"],
+                    command=lambda media=i: self.media_clicked(media),
+                ).pack()
+        #plans
+        self.lbl_plan = ctk.CTkLabel(self._frame_main, text="plans").pack()
+        for i in range(len(data.plans)):
+            if account["plan"] == i:
+                ctk.CTkButton(
+                self._frame_main,
+                text=data.plans[i]["name"],
+                command=lambda plan=i: self.plan_clicked(plan),
+                state="disabled"
+                ).pack()
+            else:
+                ctk.CTkButton(
+                    self._frame_main,
+                    text=data.plans[i]["name"],
+                    command=lambda plan=i: self.plan_clicked(plan),
+                ).pack()
 
     def media_clicked(self, profile):
-        pass
+        self.acc_man.set_profile(profile)
+        self._frame_main.destroy()
+        self._build_main()
+
+        
+
+    def plan_clicked(self, plan):
+        self.acc_man.set_plan(plan)
+        self._frame_main.destroy()
+        self._build_main()
+        #todo
+        # confirmation
+        # switch acc plan
+        # print invoice
+        
 
 
 class HomeScene(Scene):
@@ -217,8 +263,9 @@ class HomeScene(Scene):
 
     def enter_scene(self):
         if self.acc_man.current_account != {}:
+            self.med_man.ratings_filter = self.acc_man.get_active_profile()["age"]
+            print(self.med_man.ratings_filter)
             self.med_man.update_visible()
-            print(self.med_man.visible_list)
             self._build_list()
         else:
             raise ValueError("Entered homescene without an account")
@@ -272,6 +319,3 @@ class ViewMediaScene(Scene):
 
     def media_clicked(self, profile):
         pass
-
-class PlanScene(Scene):
-    pass

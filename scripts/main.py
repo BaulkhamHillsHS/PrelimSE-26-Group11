@@ -58,3 +58,4 @@ class StreamingApp(ctk.CTk):
 if __name__ == "__main__":
     app = StreamingApp()
     app.mainloop()
+    print("exit")

@@ -24,7 +24,8 @@ MA = 15  # the scope of this project
 R = 18
 X = 18
 
-plans = {"base_plan": {"monthly_price": 9.99}, "premium_plan": {"monthly_price": 19.99}}
+plans = [{"name" : "Basic Plan", "monthly_price": 9.99}, 
+        {"name" : "premium_plan", "monthly_price": 19.99}]
 
 # need to replace "path"s with image paths
 media = [

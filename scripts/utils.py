@@ -37,7 +37,7 @@ class AccountManager:
         # switch to login screen
 
     def set_profile(self, profile):
-        self.current_account["active_profile"] = profile
+        self._profile = profile
         # switch to welcome screen
         # update content filters
 
@@ -121,8 +121,6 @@ class MediaManager:
         self.ratings_filter = data.X
 
     def update_visible(self):
-        # update filters
-        self.ratings_filter = self.acc_man.get_active_profile()["age"]
         # update list
         self.visible_list = []
         for i in range(len(self.media_list)):
