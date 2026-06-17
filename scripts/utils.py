@@ -17,7 +17,6 @@ class Account():
         self._data["password"] = literal_eval(data["password"])
         self._data["plan"] = int(data["plan"])
         self._data["payment"] = str(data["payment"])
-        self._data["active_profile"] = int(data["active_profile"])
         # convert list formatted as a string to list
         self._data["profiles"] = literal_eval(data["profiles"])
 
@@ -103,11 +102,14 @@ class LogManager:
 
     def add_subscription_activity(self, current_plan, new_plan) -> None:
         with open(self.path, "a") as f:
-            f.write(f"""Invoice for change in subscription plan
-Account name : {self.acc_man.current_account["username"]}
-Payment Credentials : {self.acc_man.current_account["playment"]}
-Old Plan : {data.plans[current_plan]["name"]} @ {data.plans[current_plan]["price"]}/month
-New Plan : {data.plans[new_plan]["name"]} @ {data.plans[new_plan]["price"]}/month
+            f.write(f"""==========================================
+Invoice for change in subscription plan
+Account name : {self.acc_man.current_account.p_get("username")}
+Payment Credentials : {self.acc_man.current_account.p_get("playment")}
+Date : {datetime.date.today()}
+Old Plan : {data.plans[current_plan]["name"]} @ ${data.plans[current_plan]["price"]}/month
+New Plan : {data.plans[new_plan]["name"]} @ ${data.plans[new_plan]["price"]}/month
+==========================================
 """)
 
 

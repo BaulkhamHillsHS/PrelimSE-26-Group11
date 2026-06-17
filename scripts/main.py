@@ -33,7 +33,7 @@ class StreamingApp(ctk.CTk):
             self.HOME: scene.HomeScene(self, self.log_manager, self.media_manager,self.account_manager),
             self.PROFILE: scene.OpeningProfileScene(self, self.account_manager),
             self.VIEW: scene.ViewMediaScene(self, self.media_manager),
-            self.ACCOUNT: scene.AccountScene(self, self.account_manager)
+            self.ACCOUNT: scene.AccountScene(self, self.account_manager, self.log_manager)
         }
         self.cached_scenes = []
 
@@ -58,4 +58,5 @@ class StreamingApp(ctk.CTk):
 if __name__ == "__main__":
     app = StreamingApp()
     app.mainloop()
+    app.account_manager.save_csv()
     print("exit")

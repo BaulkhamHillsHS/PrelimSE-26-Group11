@@ -85,10 +85,8 @@ class Header(ctk.CTkFrame):
 
     def quit_clicked(self):
         # add a confirm
-        result = tk.messagebox.askyesno("Confirm", "Exit GexVideos?")
-        if not result:
-            return
-        self.app.destroy()
+        if tk.messagebox.askyesno("Confirm", "Exit GexVideos?"):
+            self.app.destroy()
 # based on state design pattern
 class Scene(ctk.CTkFrame):
     def __init__(self, app):
@@ -202,8 +200,9 @@ class OpeningProfileScene(Scene):
 
 
 class AccountScene(Scene):
-    def __init__(self, master, account_manager):
+    def __init__(self, master, account_manager, log_manager):
         self.acc_man : AccountManager = account_manager
+        self.log_man : LogManager = log_manager
         self.profile_buttons = []
         self.plan_buttons = []
         super().__init__(master)
@@ -248,7 +247,7 @@ class AccountScene(Scene):
                     text=data.plans[i]["name"],
                     command=lambda plan=i: self.plan_clicked(plan),
                 ).pack()
-        self.btn_logout = ctk.CTkButton(self, width=70, text="Log Out", command=self.click_logout).pack()
+        self.btn_logout = ctk.CTkButton(self._frame_main, width=70, text="Log Out", command=self.click_logout).pack()
 
     def media_clicked(self, profile):
         self.acc_man.set_profile(profile)
@@ -258,18 +257,18 @@ class AccountScene(Scene):
         
 
     def plan_clicked(self, plan):
-        self.acc_man.set_plan(plan)
-        self._frame_main.destroy()
-        self._build_main()
+        if tk.messagebox.askyesno("Confirm", f"Switch to {data.plans[plan]["name"]} Plan?"):
+            self.log_man.add_subscription_activity(self.acc_man.current_account.p_get("plan"), plan)
+            self.acc_man.current_account.set_plan(plan)
+            self._frame_main.destroy()
+            self._build_main()
         #todo
         # confirmation
         # switch acc plan
         # print invoice
     def click_logout(self):
-        result = tk.messagebox.askyesno("Confirm", f"Logout of {self.acc_man.current_account.p_get("username")}?")
-        if not result:
-            return
-        self.app.switch_scene(self.app.LOGIN)
+        if tk.messagebox.askyesno("Confirm", f"Logout of {self.acc_man.current_account.p_get("username")}?"):
+            self.app.switch_scene(self.app.LOGIN)
 
 
 class HomeScene(Scene):

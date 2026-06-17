@@ -24,8 +24,10 @@ MA = 15  # the scope of this project
 R = 18
 X = 18
 
-plans = [{"name" : "Basic Plan", "monthly_price": 9.99}, 
-        {"name" : "premium_plan", "monthly_price": 19.99}]
+rating_names = {G : "G", PG : "PG", M : "M", MA : "MA", R : "R", X : "X"}
+
+plans = [{"name" : "Basic Plan", "price": 9.99}, 
+        {"name" : "Premium Plan", "price": 19.99}]
 
 # need to replace "path"s with image paths
 media = [
