@@ -1,3 +1,5 @@
 scripts/__pycache__/
 .zed/
 __pycache__/
+.ropeproject/
+.vscode/

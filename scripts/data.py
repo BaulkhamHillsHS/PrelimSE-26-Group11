@@ -24,7 +24,10 @@ MA = 15  # the scope of this project
 R = 18
 X = 18
 
-plans = {"base_plan": {"monthly_price": 9.99}, "premium_plan": {"monthly_price": 19.99}}
+rating_names = {G : "G", PG : "PG", M : "M", MA : "MA", R : "R", X : "X"}
+
+plans = [{"name" : "Basic Plan", "price": 9.99}, 
+        {"name" : "Premium Plan", "price": 19.99}]
 
 # need to replace "path"s with image paths
 media = [
@@ -77,6 +80,7 @@ class Media:
         self.length_sec = media[id]["length_sec"]
         self.rating = media[id]["rating"]
         self.genre = media[id]["genre"]
+        self.type = media[id]["type"]
 
     def build_card(self) -> None:
         pass

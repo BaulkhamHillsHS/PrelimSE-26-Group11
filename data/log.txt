@@ -22,3 +22,72 @@
 2026-06-14 01:23:16.233633 : a watched Gex 1 Intro Cutscene
 2026-06-14 01:23:17.057168 : a watched Gex 1 Ending Cutscene
 2026-06-14 01:23:17.625151 : a watched Gex 1 compilation
+2026-06-15 21:27:29.797864 : Gex2 watched Hardcore Gex
+2026-06-16 01:40:46.607957 : a watched Gex 1 Intro Cutscene
+2026-06-16 01:40:47.786292 : a watched Hardcore Gex
+2026-06-16 01:56:27.688903 : a watched Gex 1 Intro Cutscene
+2026-06-16 01:56:49.296369 : a watched Gex 1 Intro Cutscene
+2026-06-16 02:00:31.000392 : a watched Gex 1 Intro Cutscene
+2026-06-16 02:00:36.870551 : a watched Gex 1 compilation
+2026-06-16 02:00:41.567302 : a watched Hardcore Gex
+2026-06-16 02:02:19.984699 : a watched Gex 1 compilation
+2026-06-16 02:02:22.229783 : a watched Gex 1 Intro Cutscene
+2026-06-16 02:02:23.982533 : a watched Gex 1 Ending Cutscene
+2026-06-16 02:02:26.204520 : a watched Hardcore Gex
+2026-06-16 18:18:28.954911 : a watched Gex 1 Ending Cutscene
+2026-06-17 23:20:19.730415 : a watched Gex 1 Intro Cutscene
+2026-06-17 23:20:37.619067 : a watched Gex 1 Intro Cutscene
+2026-06-17 23:22:36.684413 : a watched Gex 1 Intro Cutscene
+2026-06-17 23:29:19.995394 : a watched Gex 1 Intro Cutscene
+2026-06-17 23:32:58.786433 : a watched Gex 1 Intro Cutscene
+2026-06-17 23:33:21.287058 : a watched Gex 1 Intro Cutscene
+2026-06-17 23:33:23.976910 : a watched Gex 1 Ending Cutscene
+2026-06-17 23:33:28.493125 : a watched Hardcore Gex
+==========================================
+Invoice for change in subscription plan
+Account name : a
+Payment Credentials : None
+Date : <class 'datetime.date'>
+Old Plan : Basic Plan @ 9.99/month
+New Plan : Premium Plan @ 19.99/month
+==========================================
+==========================================
+Invoice for change in subscription plan
+Account name : a
+Payment Credentials : None
+Date : <class 'datetime.date'>
+Old Plan : Premium Plan @ 19.99/month
+New Plan : Basic Plan @ 9.99/month
+==========================================
+==========================================
+Invoice for change in subscription plan
+Account name : a
+Payment Credentials : None
+Date : 2026-06-18
+Old Plan : Basic Plan @ $9.99/month
+New Plan : Premium Plan @ $19.99/month
+==========================================
+==========================================
+Invoice for change in subscription plan
+Account name : a
+Payment Credentials : None
+Date : 2026-06-18
+Old Plan : Basic Plan @ $9.99/month
+New Plan : Premium Plan @ $19.99/month
+==========================================
+==========================================
+Invoice for change in subscription plan
+Account name : a
+Payment Credentials : None
+Date : 2026-06-18
+Old Plan : Premium Plan @ $19.99/month
+New Plan : Basic Plan @ $9.99/month
+==========================================
+==========================================
+Invoice for change in subscription plan
+Account name : a
+Payment Credentials : None
+Date : 2026-06-18
+Old Plan : Basic Plan @ $9.99/month
+New Plan : Premium Plan @ $19.99/month
+==========================================

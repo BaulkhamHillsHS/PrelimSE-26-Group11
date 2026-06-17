@@ -1,7 +1,7 @@
 import customtkinter as ctk
 import tkinter as tk
 from PIL import Image
-
+from utils import *
 
 class Navbar(ctk.CTkFrame):
     """Navigation bar containing buttons with links to different scenes."""
@@ -9,31 +9,22 @@ class Navbar(ctk.CTkFrame):
     def __init__(self, master, stream_app):
         super().__init__(master)
         self.stream_app = stream_app
-        self.btn_logout = ctk.CTkButton(self,
-                                        width=70,
-                                        text="Log Out",
-                                        command=self.click_logout)
-        self.btn_logout.grid(row=0, column=0, padx=4)
-        self.btn_home = ctk.CTkButton(self,
-                                      width=70,
-                                      text="Home",
-                                      command=self.click_home)
-        self.btn_home.grid(row=0, column=1, padx=4)
-        self.btn_profiles = ctk.CTkButton(self,
-                                          width=70,
-                                          text="Profiles",
-                                          command=self.click_profiles)
-        self.btn_profiles.grid(row=0, column=2, padx=4)
+        self.btn_home = ctk.CTkButton(self, width=70, text="Home", command=self.click_home)
+        self.btn_home.grid(row=0, column=0, padx=4)
+        self.btn_profiles = ctk.CTkButton(self, width=70, text="Account", command=self.click_account)
+        self.btn_profiles.grid(row=0, column=1, padx=4)
 
     # yes, these are hardcoded. don't ask me how long I wasted trying to avoid this
-    def click_logout(self):
-        self.stream_app.switch_scene(self.stream_app.LOGIN)
+    
 
     def click_home(self):
         self.stream_app.switch_scene(self.stream_app.HOME)
         
     def click_profiles(self):
         self.stream_app.switch_scene(self.stream_app.PROFILE)
+
+    def click_account(self):
+        self.stream_app.switch_scene(self.stream_app.ACCOUNT)
 
 class FilterBar(ctk.CTkFrame):
     def __init__(self, master, genres: list[str]=["gex", "the", "gecko"]):
@@ -44,11 +35,7 @@ class FilterBar(ctk.CTkFrame):
         self.radio_var = tk.IntVar(value=0)
         genres.insert(0, "all")
         for i in range(len(genres)):
-            radio = ctk.CTkRadioButton(self,
-                                       text=genres[i],
-                                       variable=self.radio_var,
-                                       value=i,
-                                       command=self.radio_clicked)
+            radio = ctk.CTkRadioButton(self,text=genres[i], variable=self.radio_var, value=i, command=self.radio_clicked)
             radio.grid(row=0, column=i+1)
     
     def radio_clicked(self):
@@ -58,35 +45,60 @@ class FilterBar(ctk.CTkFrame):
         
 
 class Header(ctk.CTkFrame):
-    def __init__(self, scene, app):
+    def __init__(self, scene, app, build_navbar = True):
         super().__init__(master=scene)
         self.app = app
         self.configure(width=400, height=200)
         self.rowconfigure(0, weight=1)
-        self.columnconfigure((0,1,2), weight=1)
+        self.columnconfigure((0,1,2,3), weight=1)
         
         # load image and display logo label containing image
         self.img_logo = ctk.CTkImage(
             light_image=Image.open("data/images/Gex2Cover.jpg"), size=(80, 80)
         )
         # text=' ' (single space) to not display default 'CTkLabel' text on label
-        self.lbl_logo = ctk.CTkLabel(self, text=" ", image=self.img_logo)
-        self.lbl_logo.grid(row=0, column=0)
+        self.lbl_logo = ctk.CTkLabel(self, text=" ", image=self.img_logo,width=80)
+        self.lbl_logo.grid(row=0, column=0, sticky="w")
 
         self.lbl_title = ctk.CTkLabel(
             self, text="GEx VIDEos", font=("Comic Sans MS", 20)
         )
         self.lbl_title.grid(row=0, column=1, sticky="w")
 
-        # the navbar and its button elements which link to other scenes
-        self.navbar = Navbar(self, self.app)
-        self.navbar.grid(row=0, column=2)
+        if build_navbar:
+            self.navbar = ctk.CTkFrame(self, width=200, height=100)
 
+            self.btn_home = ctk.CTkButton(self.navbar, width=70, text="Home", command=self.click_home)
+            self.btn_home.grid(row=0, column=0, padx=4)
+            self.btn_profiles = ctk.CTkButton(self.navbar, width=70, text="Account", command=self.click_account)
+            self.btn_profiles.grid(row=0, column=1, padx=4)
+            self.navbar.grid(row=0, column=2, sticky="w")
+
+        self.btn_home = ctk.CTkButton(self, width=70, text="Quit", command=self.quit_clicked)
+        self.btn_home.grid(row=0, column=3, padx=4, sticky="e")
+
+    def click_home(self):
+        self.app.switch_scene(self.app.HOME)
+
+    def click_account(self):
+        self.app.switch_scene(self.app.ACCOUNT)
+
+    def quit_clicked(self):
+        # add a confirm
+        if tk.messagebox.askyesno("Confirm", "Exit GexVideos?"):
+            self.app.destroy()
+# based on state design pattern
 class Scene(ctk.CTkFrame):
     def __init__(self, app):
         super().__init__(master=app)
         self.app = app
         self.configure(width=540, height=720)
+
+    def enter_scene(self):
+        pass
+
+    def exit_scene(self):
+        pass
 
     def build_frame(self):
         self._build_header()
@@ -107,37 +119,33 @@ class Scene(ctk.CTkFrame):
 
 
 class LoginScene(Scene):
-    def __init__(self, master, account_manager):
-        self.acc_man = account_manager
+    def __init__(self, master, account_manager : AccountManager):
+        self.acc_man : AccountManager = account_manager
         super().__init__(master)
 
+
     def _build_header(self):
-        """Redefined to empty for the login scene, as the user should not have access to the app functions before logging in."""
-        pass
+        self._frame_header = Header(self, self.app, False)
+        self._frame_header.pack(fill=ctk.X)
 
     def _build_main(self):
         """Build a simple username and password form with a title and a button that links to HomeScene."""
         self._frame_main = ctk.CTkFrame(self, width=400, height=400)
         self._frame_main.pack(expand=True, fill=ctk.Y)
-        self.lbl_title = ctk.CTkLabel(
-            self._frame_main, text="GEx VIDEos", font=("Comic Sans MS", 20)
-        )
-        self.lbl_title.pack(expand=True)
 
+        # Username
         self.lbl_username = ctk.CTkLabel(self._frame_main, text="Enter Username:")
         self.lbl_username.pack(anchor=ctk.S)
-        self.ent_username = ctk.CTkEntry(
-            self._frame_main, placeholder_text="eg. Gex T. Gecko"
-        )
+        self.ent_username = ctk.CTkEntry(self._frame_main, placeholder_text="eg. Gex T. Gecko")
         self.ent_username.pack(expand=True)
 
+        # Password
         self.lbl_pw = ctk.CTkLabel(self._frame_main, text="Enter Password:")
         self.lbl_pw.pack(anchor=ctk.S)
-        self.ent_pw = ctk.CTkEntry(
-            self._frame_main, placeholder_text="eg. its_tail_time"
-        )
+        self.ent_pw = ctk.CTkEntry(self._frame_main, placeholder_text="eg. its_tail_time")
         self.ent_pw.pack(expand=True)
 
+        # login button
         self.btn_login = ctk.CTkButton(
             self._frame_main,
             width=200,
@@ -147,15 +155,22 @@ class LoginScene(Scene):
         )
         self.btn_login.pack(expand=True)
 
+        # error message
+        self.lbl_error = ctk.CTkLabel(self._frame_main, text="", text_color="red")
+        self.lbl_error.pack(expand=True)
+
     def login_button_clicked(self):
         login_status = self.acc_man.login(self.ent_username.get(), self.ent_pw.get())
         if login_status == self.acc_man.LOGIN_SUCCESS:
-            print("yippee")
             self.app.switch_scene(self.app.PROFILE)
         if login_status == self.acc_man.LOGIN_USER_ERR:
-            print("wring user  | ", self.ent_username.get())
+            self.lbl_error.configure(text = "Invalid username")
         if login_status == self.acc_man.LOGIN_PASS_ERR:
-            print("password wrong")
+            self.lbl_error.configure(text = "Invalid password")
+    def enter_scene(self):
+        self.lbl_error.configure(text = "")
+        self.ent_username.delete(0,"end")
+        self.ent_pw.delete(0,"end")
 
 
 class OpeningProfileScene(Scene):
@@ -168,25 +183,28 @@ class OpeningProfileScene(Scene):
         self._frame_main = ctk.CTkFrame(self, width=400, height=200)
         self._frame_main.pack()
         account = self.acc_man.current_account
-        for i in range(len(account["profiles"])):
+        for i in range(len(account.p_get("profiles"))):
             ctk.CTkButton(
                 self._frame_main,
-                text=account["profiles"][i]["name"],
+                text=account.p_get("profiles")[i]["name"],
                 command=lambda profile=i: self.profile_clicked(profile),
             ).pack()
 
     def _build_header(self):
-        """Redefined to empty for the login scene, as the user should not have access to the app functions before logging in."""
-        pass
+        self._frame_header = Header(self, self.app, False)
+        self._frame_header.pack(fill=ctk.X)
 
     def profile_clicked(self, profile):
-        self.acc_man.current_account["active_profile"] = profile
+        self.acc_man.set_profile(profile)
         self.app.switch_scene(self.app.HOME)
 
 
 class AccountScene(Scene):
-    def __init__(self, master, account_manager):
-        self.acc_man = account_manager
+    def __init__(self, master, account_manager, log_manager):
+        self.acc_man : AccountManager = account_manager
+        self.log_man : LogManager = log_manager
+        self.profile_buttons = []
+        self.plan_buttons = []
         super().__init__(master)
 
     def _build_main(self):
@@ -194,58 +212,153 @@ class AccountScene(Scene):
         self._frame_main = ctk.CTkFrame(self, width=400, height=200)
         self._frame_main.pack()
         account = self.acc_man.current_account
-        for i in range(len(account["profiles"])):
-            ctk.CTkButton(
+
+        self.lbl_account = ctk.CTkLabel(self._frame_main, text=account.p_get("username")).pack()
+        #profile
+        self.lbl_profiles = ctk.CTkLabel(self._frame_main, text="profiles").pack()
+        #profile buttons
+        for i in range(len(account.p_get("profiles"))):
+            if account.p_get("profiles")[i] == self.acc_man.get_active_profile():
+                ctk.CTkButton(
                 self._frame_main,
-                text=account["profiles"][i]["name"],
-                command=lambda media=account["profiles"][i]: self.media_clicked(media),
-            ).pack()
+                text=account.p_get("profiles")[i]["name"],
+                command=lambda media=i: self.media_clicked(media),
+                state="disabled"
+                ).pack()
+            else:
+                ctk.CTkButton(
+                    self._frame_main,
+                    text=account.p_get("profiles")[i]["name"],
+                    command=lambda media=i: self.media_clicked(media),
+                ).pack()
+        #plans
+        self.lbl_plan = ctk.CTkLabel(self._frame_main, text="plans").pack()
+        for i in range(len(data.plans)):
+            if account.p_get("plan") == i:
+                ctk.CTkButton(
+                self._frame_main,
+                text=data.plans[i]["name"],
+                command=lambda plan=i: self.plan_clicked(plan),
+                state="disabled"
+                ).pack()
+            else:
+                ctk.CTkButton(
+                    self._frame_main,
+                    text=data.plans[i]["name"],
+                    command=lambda plan=i: self.plan_clicked(plan),
+                ).pack()
+        self.btn_logout = ctk.CTkButton(self._frame_main, width=70, text="Log Out", command=self.click_logout).pack()
 
     def media_clicked(self, profile):
-        pass
+        self.acc_man.set_profile(profile)
+        self._frame_main.destroy()
+        self._build_main()
+
+        
+
+    def plan_clicked(self, plan):
+        if tk.messagebox.askyesno("Confirm", f"Switch to {data.plans[plan]["name"]} Plan?"):
+            self.log_man.add_subscription_activity(self.acc_man.current_account.p_get("plan"), plan)
+            self.acc_man.current_account.set_plan(plan)
+            self._frame_main.destroy()
+            self._build_main()
+        #todo
+        # confirmation
+        # switch acc plan
+        # print invoice
+    def click_logout(self):
+        if tk.messagebox.askyesno("Confirm", f"Logout of {self.acc_man.current_account.p_get("username")}?"):
+            self.app.switch_scene(self.app.LOGIN)
 
 
 class HomeScene(Scene):
-    def __init__(self, master, log_manager, media_manager):
+    def __init__(self, master, log_manager, media_manager, account_manager):
         self.log_man = log_manager
-        self.med_man = media_manager
+        self.med_man : MediaManager = media_manager
+        self.acc_man : AccountManager = account_manager
+        super().__init__(master)
+        self._list_frame = ctk.CTkScrollableFrame(self, width=380, height=700)
+        
+
+    def enter_scene(self):
+        if self.acc_man.current_account != {}:
+            self.med_man.ratings_filter = self.acc_man.get_active_profile()["age"]
+            self.med_man.update_visible()
+            self._build_list()
+        else:
+            raise ValueError("Entered homescene without an account")
+    def _build_list(self):
+        self._list_frame.destroy()
+        self._list_frame = ctk.CTkScrollableFrame(self._frame_main, width=380, height=700)
+        for index in self.med_man.visible_list:
+
+            ctk.CTkButton(
+                self._list_frame,
+                text=self.med_man.media_list[index].title,
+                # lambda so the the command can pass a parameter
+                command=lambda media_index=index: self.media_clicked(media_index),
+            ).pack()
+            if index in self.acc_man.get_active_profile()["watchlist"]:
+                ctk.CTkButton(self._list_frame, text="Remove from watchlist",
+                    command=lambda media_index=index: self.remove_watchlist_clicked(media_index)).pack()
+            else:
+                ctk.CTkButton(self._list_frame, text="Add to watchlist",
+                    command=lambda media_index=index: self.add_watchlist_clicked(media_index)).pack()
+                
+
+            genres = []
+            for genre in self.med_man.media_list[index].genre:
+                genres.append(str(genre))
+
+            text = f"""\
+{self.med_man.media_list[index].title}
+{self.med_man.media_list[index].length_sec} seconds
+{self.med_man.media_list[index].rating} or above only
+{' '.join(genres)}"""
+            
+            ctk.CTkLabel(self._list_frame,text=text,).pack()
+        self._list_frame.pack()
+    def _build_main(self):
+        # currently builds a pack of labels with different metadata
+        self._frame_main = ctk.CTkFrame(self, width=400, height=720)
+        self._frame_main.pack()
+        
+        self._build_list()
+
+    def media_clicked(self, media_id):
+        self.log_man.add_viewing_activity(self.med_man.media_list[media_id])
+        self.med_man.current_viewed = media_id
+        self.app.switch_scene(self.app.VIEW)
+        # switch to viewing scene(media)
+    
+    #todo
+    def add_watchlist_clicked(self, media_id):
+        self.acc_man.get_active_profile()["watchlist"].append(media_id)
+        self._list_frame.destroy()
+        self._build_list()
+
+    def remove_watchlist_clicked(self, media_id):
+        for i in range(len(self.acc_man.get_active_profile()["watchlist"])):
+            if i == media_id:
+                self.acc_man.get_active_profile()["watchlist"].pop(i)
+                self._list_frame.destroy()
+                self._build_list()
+                return
+
+
+
+class ViewMediaScene(Scene):
+    def __init__(self, master, media_manager):
+        self.med_man : MediaManager = media_manager
         super().__init__(master)
 
+    def enter_scene(self):
+        self.test.configure(text=self.med_man.media_list[self.med_man.current_viewed].title)
+
     def _build_main(self):
-        self._frame_main = ctk.CTkFrame(self, width=600, height=200)
-        self._frame_main.pack(fill=ctk.Y)
-        self.filter_bar = FilterBar(self._frame_main)
-        self.filter_bar.pack(expand=True, fill=ctk.X)
-        # build a pack of labels with metadata about their media, and their watch buttons
-        for media in self.med_man.media_list:
-            # this should be removed when real genres get implemented
-            genres = []
-            for genre in media.genre:
-                genres.append(str(genre))
-            text = f"""{media.title}
-{media.length_sec} seconds
-{media.rating} or above only
-{' '.join(genres)}"""
-            label = ctk.CTkLabel(self._frame_main, text=text)
-            label.pack()
-            
-            button = ctk.CTkButton(self._frame_main, text="Watch Now",
-                        # lambda so that the command can pass a parameter
-                        command=lambda media=media: self.media_clicked(media))
-            button.pack()
+        # currently builds a pack of labels with different metadata
+        self.test = ctk.CTkLabel(self, text=self.med_man.media_list[self.med_man.current_viewed].title)
+        self.test.pack()
 
-    def media_clicked(self, media):
-        self.log_man.add_viewing_activity(media)
-        # switch to viewing scene(media)
-
-
-class ViewMovieScene(Scene):
-    pass
-
-
-class ViewShowScene(Scene):
-    pass
-
-
-class PlanScene(Scene):
-    pass
+    def media_clicked(self, profile):
+        pass
