@@ -7,6 +7,19 @@ import encryption
 
 import data
 
+class Account():
+    def __init__(self, data):
+        # assigns each value of the row to the correct type
+        self.data = {}
+        data["username"] = str(data["username"])
+        data["email"] = str(data["email"])
+        # convert byte formatted as a string to byte
+        data["password"] = literal_eval(data["password"])
+        data["plan"] = int(data["plan"])
+        data["payment"] = str(data["payment"])
+        data["active_profile"] = int(data["active_profile"])
+        # convert list formatted as a string to list
+        data["profiles"] = literal_eval(data["profiles"])
 
 class AccountManager:
     def __init__(self) -> None:
@@ -77,7 +90,6 @@ class AccountManager:
         with open(self.CSV_PATH, "a", newline="") as csvfile:
             writer = csv.DictWriter(csvfile, self.FIELDS)
             writer.writerow(new_account)
-            print(new_account)
 
 
 class LogManager:

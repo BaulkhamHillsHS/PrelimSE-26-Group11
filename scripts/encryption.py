@@ -16,7 +16,6 @@ def decrypt(token: bytes) -> bytes:
 
 
 def validate_password(token: bytes, password: str):
-    print(decrypt(token), password.encode())
     if decrypt(token) == password.encode():
         return True
     return False
