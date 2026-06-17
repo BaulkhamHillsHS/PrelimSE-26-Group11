@@ -169,8 +169,8 @@ class LoginScene(Scene):
             self.lbl_error.configure(text = "Invalid password")
     def enter_scene(self):
         self.lbl_error.configure(text = "")
-        self.ent_username.set("")
-        self.ent_pw.set("")
+        self.ent_username.delete(0,"end")
+        self.ent_pw.delete(0,"end")
 
 
 class OpeningProfileScene(Scene):
@@ -292,6 +292,20 @@ class HomeScene(Scene):
         self._list_frame = ctk.CTkScrollableFrame(self._frame_main, width=380, height=700)
         for index in self.med_man.visible_list:
 
+            ctk.CTkButton(
+                self._list_frame,
+                text=self.med_man.media_list[index].title,
+                # lambda so the the command can pass a parameter
+                command=lambda media_index=index: self.media_clicked(media_index),
+            ).pack()
+            if index in self.acc_man.get_active_profile()["watchlist"]:
+                ctk.CTkButton(self._list_frame, text="Remove from watchlist",
+                    command=lambda media_index=index: self.remove_watchlist_clicked(media_index)).pack()
+            else:
+                ctk.CTkButton(self._list_frame, text="Add to watchlist",
+                    command=lambda media_index=index: self.add_watchlist_clicked(media_index)).pack()
+                
+
             genres = []
             for genre in self.med_man.media_list[index].genre:
                 genres.append(str(genre))
@@ -301,18 +315,8 @@ class HomeScene(Scene):
 {self.med_man.media_list[index].length_sec} seconds
 {self.med_man.media_list[index].rating} or above only
 {' '.join(genres)}"""
-            ctk.CTkLabel(
-                self._list_frame,
-                text=text,
-            ).pack()
-            ctk.CTkButton(
-                self._list_frame,
-                text=self.med_man.media_list[index].title,
-                # lambda so the the command can pass a parameter
-                command=lambda media_index=index: self.media_clicked(
-                    media_index
-                ),
-            ).pack()
+            
+            ctk.CTkLabel(self._list_frame,text=text,).pack()
         self._list_frame.pack()
     def _build_main(self):
         # currently builds a pack of labels with different metadata
@@ -328,8 +332,19 @@ class HomeScene(Scene):
         # switch to viewing scene(media)
     
     #todo
-    def add_watchlist_clicked(self):
-        self.acc_man.get_active_profile()["watchlist"].append("")
+    def add_watchlist_clicked(self, media_id):
+        self.acc_man.get_active_profile()["watchlist"].append(media_id)
+        self._list_frame.destroy()
+        self._build_list()
+
+    def remove_watchlist_clicked(self, media_id):
+        for i in range(len(self.acc_man.get_active_profile()["watchlist"])):
+            if i == media_id:
+                self.acc_man.get_active_profile()["watchlist"].pop(i)
+                self._list_frame.destroy()
+                self._build_list()
+                return
+
 
 
 class ViewMediaScene(Scene):

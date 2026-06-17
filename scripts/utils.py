@@ -97,7 +97,7 @@ class LogManager:
     def add_viewing_activity(self, media) -> None:
         with open(self.path, "a") as f:
             f.write(
-                f"{datetime.datetime.now()} : {self.acc_man.current_account['username']} watched {media.title}\n"
+                f"{datetime.datetime.now()} : {self.acc_man.current_account.p_get('username')} watched {media.title}\n"
             )
 
     def add_subscription_activity(self, current_plan, new_plan) -> None:

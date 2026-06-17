@@ -83,3 +83,11 @@ Date : 2026-06-18
 Old Plan : Premium Plan @ $19.99/month
 New Plan : Basic Plan @ $9.99/month
 ==========================================
+==========================================
+Invoice for change in subscription plan
+Account name : a
+Payment Credentials : None
+Date : 2026-06-18
+Old Plan : Basic Plan @ $9.99/month
+New Plan : Premium Plan @ $19.99/month
+==========================================
