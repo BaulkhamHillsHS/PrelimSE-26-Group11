@@ -85,6 +85,9 @@ class Header(ctk.CTkFrame):
 
     def quit_clicked(self):
         # add a confirm
+        result = tk.messagebox.askyesno("Confirm", "Exit GexVideos?")
+        if not result:
+            return
         self.app.destroy()
 # based on state design pattern
 class Scene(ctk.CTkFrame):
@@ -182,10 +185,10 @@ class OpeningProfileScene(Scene):
         self._frame_main = ctk.CTkFrame(self, width=400, height=200)
         self._frame_main.pack()
         account = self.acc_man.current_account
-        for i in range(len(account["profiles"])):
+        for i in range(len(account.p_get("profiles"))):
             ctk.CTkButton(
                 self._frame_main,
-                text=account["profiles"][i]["name"],
+                text=account.p_get("profiles")[i]["name"],
                 command=lambda profile=i: self.profile_clicked(profile),
             ).pack()
 
@@ -211,28 +214,28 @@ class AccountScene(Scene):
         self._frame_main.pack()
         account = self.acc_man.current_account
 
-        self.lbl_account = ctk.CTkLabel(self._frame_main, text=account["username"]).pack()
+        self.lbl_account = ctk.CTkLabel(self._frame_main, text=account.p_get("username")).pack()
         #profile
         self.lbl_profiles = ctk.CTkLabel(self._frame_main, text="profiles").pack()
         #profile buttons
-        for i in range(len(account["profiles"])):
-            if account["profiles"][i] == self.acc_man.get_active_profile():
+        for i in range(len(account.p_get("profiles"))):
+            if account.p_get("profiles")[i] == self.acc_man.get_active_profile():
                 ctk.CTkButton(
                 self._frame_main,
-                text=account["profiles"][i]["name"],
+                text=account.p_get("profiles")[i]["name"],
                 command=lambda media=i: self.media_clicked(media),
                 state="disabled"
                 ).pack()
             else:
                 ctk.CTkButton(
                     self._frame_main,
-                    text=account["profiles"][i]["name"],
+                    text=account.p_get("profiles")[i]["name"],
                     command=lambda media=i: self.media_clicked(media),
                 ).pack()
         #plans
         self.lbl_plan = ctk.CTkLabel(self._frame_main, text="plans").pack()
         for i in range(len(data.plans)):
-            if account["plan"] == i:
+            if account.p_get("plan") == i:
                 ctk.CTkButton(
                 self._frame_main,
                 text=data.plans[i]["name"],
@@ -263,7 +266,10 @@ class AccountScene(Scene):
         # switch acc plan
         # print invoice
     def click_logout(self):
-        self.stream_app.switch_scene(self.stream_app.LOGIN)
+        result = tk.messagebox.askyesno("Confirm", f"Logout of {self.acc_man.current_account.p_get("username")}?")
+        if not result:
+            return
+        self.app.switch_scene(self.app.LOGIN)
 
 
 class HomeScene(Scene):

@@ -10,16 +10,28 @@ import data
 class Account():
     def __init__(self, data):
         # assigns each value of the row to the correct type
-        self.data = {}
-        data["username"] = str(data["username"])
-        data["email"] = str(data["email"])
+        self._data = {}
+        self._data["username"] = str(data["username"])
+        self._data["email"] = str(data["email"])
         # convert byte formatted as a string to byte
-        data["password"] = literal_eval(data["password"])
-        data["plan"] = int(data["plan"])
-        data["payment"] = str(data["payment"])
-        data["active_profile"] = int(data["active_profile"])
+        self._data["password"] = literal_eval(data["password"])
+        self._data["plan"] = int(data["plan"])
+        self._data["payment"] = str(data["payment"])
+        self._data["active_profile"] = int(data["active_profile"])
         # convert list formatted as a string to list
-        data["profiles"] = literal_eval(data["profiles"])
+        self._data["profiles"] = literal_eval(data["profiles"])
+
+    def get_data(self):
+        return self._data
+
+    def p_get(self, property):
+        if property in self._data:
+            return self._data[property]
+        else : return None
+    
+    def set_plan(self, plan):
+        self._data["plan"] = plan
+
 
 class AccountManager:
     def __init__(self) -> None:
@@ -37,9 +49,9 @@ class AccountManager:
     # attempts to login
     def login(self, username, password) -> int:
         for account in self._accounts:
-            if account["username"] != username and account["email"] != username:
+            if account.p_get("username") != username and account.p_get("email") != username:
                 continue
-            if encryption.validate_password(account["password"], password):
+            if encryption.validate_password(account.p_get("password"), password):
                 self.current_account = account
                 return self.LOGIN_SUCCESS
             return self.LOGIN_PASS_ERR
@@ -55,36 +67,22 @@ class AccountManager:
         # update content filters
 
     def get_active_profile(self):
-        return self.current_account["profiles"][self._profile]
+        return self.current_account.p_get("profiles")[self._profile]
 
-    def set_plan(self, plan):
-        self.current_account["plan"] = plan
-        # notify log manager(plan)
 
     def save_csv(self):
         with open(self.CSV_PATH, "w", newline="") as csvfile:
             writer = csv.DictWriter(csvfile, self.FIELDS)
             writer.writeheader()
             for account in self._accounts:
-                writer.writerow(account)
+                writer.writerow(account.get_data())
 
     def load_csv(self):
         self._accounts = []
         with open(self.CSV_PATH, "r", newline="") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
-                # assigns each value of the row to the correct type
-                row["username"] = str(row["username"])
-                row["email"] = str(row["email"])
-                # convert byte formatted as a string to byte
-                row["password"] = literal_eval(row["password"])
-                row["plan"] = int(row["plan"])
-                row["payment"] = str(row["payment"])
-                row["active_profile"] = int(row["active_profile"])
-                # convert list formatted as a string to list
-                row["profiles"] = literal_eval(row["profiles"])
-
-                self._accounts.append(row)
+                self._accounts.append(Account(row))
 
     def append_csv(self, new_account):
         with open(self.CSV_PATH, "a", newline="") as csvfile:
