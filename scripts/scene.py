@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import tkinter as tk
 from PIL import Image
 from utils import *
 
@@ -8,24 +9,47 @@ class Navbar(ctk.CTkFrame):
     def __init__(self, master, stream_app):
         super().__init__(master)
         self.stream_app = stream_app
-        self.btn_logout = ctk.CTkButton(self, text="Log Out", command=self.click_logout)
-        self.btn_logout.grid(row=0, column=0)
-        self.btn_home = ctk.CTkButton(self, text="Home", command=self.click_home)
-        self.btn_home.grid(row=0, column=1)
-        self.btn_account = ctk.CTkButton(self, text="Account", command=self.click_account)
-        self.btn_account.grid(row=0, column=2)
+        self.btn_logout = ctk.CTkButton(self, width=70, text="Log Out", command=self.click_logout)
+        self.btn_logout.grid(row=0, column=0, padx=4)
+        self.btn_home = ctk.CTkButton(self, width=70, text="Home", command=self.click_home)
+        self.btn_home.grid(row=0, column=1, padx=4)
+        self.btn_profiles = ctk.CTkButton(self, width=70, text="Account", command=self.click_account)
+        self.btn_profiles.grid(row=0, column=2, padx=4)
 
     # yes, these are hardcoded. don't ask me how long I wasted trying to avoid this
     def click_logout(self):
-        # Navbar runs command, master-> _frame_header, master->Scene subclass, master->StreamingApp
         self.stream_app.switch_scene(self.stream_app.LOGIN)
 
     def click_home(self):
         self.stream_app.switch_scene(self.stream_app.HOME)
+        
+    def click_profiles(self):
+        self.stream_app.switch_scene(self.stream_app.PROFILE)
 
     def click_account(self):
         self.stream_app.switch_scene(self.stream_app.ACCOUNT)
 
+class FilterBar(ctk.CTkFrame):
+    def __init__(self, master, genres: list[str]=["gex", "the", "gecko"]):
+        super().__init__(master)
+        ctk.CTkLabel(self, text="Filter by:").grid(row=0, column=0, padx=20)
+        # by default will be set to "all" upon creation
+        # all is created by the method and does not have to be passed in in the list of genres
+        self.radio_var = tk.IntVar(value=0)
+        genres.insert(0, "all")
+        for i in range(len(genres)):
+            radio = ctk.CTkRadioButton(self,
+                                       text=genres[i],
+                                       variable=self.radio_var,
+                                       value=i,
+                                       command=self.radio_clicked)
+            radio.grid(row=0, column=i+1)
+    
+    def radio_clicked(self):
+        ##### add updating of the filters/visible media cards etc.
+        # radio_var.get() carries the int value of the genre (the int value of the radio button)
+        print(self.radio_var.get())
+        
 
 class Header(ctk.CTkFrame):
     def __init__(self, scene, app):
@@ -33,8 +57,8 @@ class Header(ctk.CTkFrame):
         self.app = app
         self.configure(width=400, height=200)
         self.rowconfigure(0, weight=1)
-        self.columnconfigure((0, 1, 2), weight=1)
-
+        self.columnconfigure((0,1,2), weight=1)
+        
         # load image and display logo label containing image
         self.img_logo = ctk.CTkImage(
             light_image=Image.open("data/images/Gex2Cover.jpg"), size=(80, 80)
@@ -54,10 +78,10 @@ class Header(ctk.CTkFrame):
 
 # based on state design pattern
 class Scene(ctk.CTkFrame):
-    def __init__(self, master):
-        super().__init__(master)
+    def __init__(self, app):
+        super().__init__(master=app)
+        self.app = app
         self.configure(width=540, height=720)
-        self.app = master
 
     def enter_scene(self):
         pass
@@ -72,27 +96,8 @@ class Scene(ctk.CTkFrame):
     def _build_header(self):
         """Build the logo and navigation bar at the top of the screen that is in most scenes in the app."""
         # add frame and configure grid inside frame
-        self._frame_header = ctk.CTkFrame(self, width=400, height=200)
+        self._frame_header = Header(self, self.app)
         self._frame_header.pack(fill=ctk.X)
-        self._frame_header.rowconfigure(0, weight=1)
-        self._frame_header.columnconfigure((0, 1, 2), weight=1)
-
-        # load image and display logo label containing image
-        self.img_logo = ctk.CTkImage(
-            light_image=Image.open("data/images/Gex2Cover.jpg"), size=(80, 80)
-        )
-        # text=' ' (single space) to not display default 'CTkLabel' text on label
-        self.lbl_logo = ctk.CTkLabel(self._frame_header, text=" ", image=self.img_logo)
-        self.lbl_logo.grid(row=0, column=0)
-
-        self.lbl_title = ctk.CTkLabel(
-            self._frame_header, text="GEx VIDEos", font=("Comic Sans MS", 20)
-        )
-        self.lbl_title.grid(row=0, column=1, sticky="w")
-
-        # the navbar and its button elements which link to other scenes
-        self.navbar = Navbar(self._frame_header, self.master)
-        self.navbar.grid(row=0, column=2)
 
     def _build_main(self):
         """Blank usually, just for child classes to inherit and make different."""
@@ -316,6 +321,27 @@ class ViewMediaScene(Scene):
         # currently builds a pack of labels with different metadata
         self.test = ctk.CTkLabel(self, text=self.med_man.media_list[self.med_man.current_viewed].title)
         self.test.pack()
+        self._frame_main = ctk.CTkFrame(self, width=600, height=200)
+        self._frame_main.pack(fill=ctk.Y)
+        self.filter_bar = FilterBar(self._frame_main)
+        self.filter_bar.pack(expand=True, fill=ctk.X)
+        # build a pack of labels with metadata about their media, and their watch buttons
+        for media in self.med_man.media_list:
+            # this should be removed when real genres get implemented
+            genres = []
+            for genre in media.genre:
+                genres.append(str(genre))
+            text = f"""{media.title}
+{media.length_sec} seconds
+{media.rating} or above only
+{' '.join(genres)}"""
+            label = ctk.CTkLabel(self._frame_main, text=text)
+            label.pack()
+            
+            button = ctk.CTkButton(self._frame_main, text="Watch Now",
+                        # lambda so that the command can pass a parameter
+                        command=lambda media=media: self.media_clicked(media))
+            button.pack()
 
     def media_clicked(self, profile):
         pass

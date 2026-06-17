@@ -51,7 +51,7 @@ class StreamingApp(ctk.CTk):
             self.cached_scenes.append(scene_id)
             self.scenes[scene_id].build_frame()
         self.scenes[scene_id].enter_scene()
-        self.scenes[scene_id].pack()
+        self.scenes[scene_id].pack(expand=True, fill=ctk.BOTH)
         self.current_scene = scene_id
 
 
