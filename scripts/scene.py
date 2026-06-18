@@ -281,23 +281,28 @@ class HomeScene(Scene):
             self._build_list()
         else:
             raise ValueError("Entered homescene without an account")
+        
     def _build_list(self):
-        self._list_frame.destroy()
+        self._list_frame.destroy() # to reset the frame
         self._list_frame = ctk.CTkScrollableFrame(self._frame_main, width=380, height=700)
         for index in self.med_man.visible_list:
 
+            # watch button
             ctk.CTkButton(
                 self._list_frame,
                 text=self.med_man.media_list[index].title,
                 # lambda so the the command can pass a parameter
                 command=lambda media_index=index: self.media_clicked(media_index),
             ).pack()
+
+            # add/remove watchlist
+            check_state = ctk.IntVar(value=1, )
             if index in self.acc_man.get_active_profile().p_get("watchlist"):
-                ctk.CTkButton(self._list_frame, text="Remove from watchlist",
-                    command=lambda media_index=index: self.remove_watchlist_clicked(media_index)).pack()
+                ctk.CTkCheckBox(self._list_frame, text="Watchlist",variable=check_state,
+                    command=lambda media_index=index: self.watchlist_clicked(media_index)).pack()
             else:
-                ctk.CTkButton(self._list_frame, text="Add to watchlist",
-                    command=lambda media_index=index: self.add_watchlist_clicked(media_index)).pack()
+                ctk.CTkCheckBox(self._list_frame, text="Watchlist", 
+                    command=lambda media_index=index: self.watchlist_clicked(media_index)).pack()
                 
 
             genres = []
@@ -312,6 +317,8 @@ class HomeScene(Scene):
             
             ctk.CTkLabel(self._list_frame,text=text,).pack()
         self._list_frame.pack()
+
+
     def _build_main(self):
         # currently builds a pack of labels with different metadata
         self._frame_main = ctk.CTkFrame(self, width=400, height=720)
@@ -327,18 +334,13 @@ class HomeScene(Scene):
         # switch to viewing scene(media)
     
     #todo
-    def add_watchlist_clicked(self, media_id):
-        self.acc_man.get_active_profile().p_get("watchlist").append(media_id)
-        self._list_frame.destroy()
-        self._build_list()
-
-    def remove_watchlist_clicked(self, media_id):
-        for i in range(len(self.acc_man.get_active_profile().p_get("watchlist"))):
-            if i == media_id:
-                self.acc_man.get_active_profile().p_get("watchlist").pop(i)
-                self._list_frame.destroy()
-                self._build_list()
-                return
+    def watchlist_clicked(self, media_id):
+        if media_id not in self.acc_man.get_active_profile().p_get("watchlist"):
+            self.acc_man.get_active_profile().p_get("watchlist").append(media_id)
+        else:
+            for i in range(len(self.acc_man.get_active_profile().p_get("watchlist"))):
+                if i == media_id:
+                    self.acc_man.get_active_profile().p_get("watchlist").pop(i)
 
 
 
@@ -355,5 +357,3 @@ class ViewMediaScene(Scene):
         self.test = ctk.CTkLabel(self, text=self.med_man.media_list[self.med_man.current_viewed].title)
         self.test.pack()
 
-    def media_clicked(self, profile):
-        pass
