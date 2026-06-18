@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import tkinter as tk
 import scene
 import utils
 
@@ -36,6 +37,7 @@ class StreamingApp(ctk.CTk):
             self.ACCOUNT: scene.AccountScene(self, self.account_manager, self.log_manager)
         }
         self.cached_scenes = []
+        self.has_started = False
 
         self.switch_scene(self.LOGIN)
 
@@ -54,9 +56,21 @@ class StreamingApp(ctk.CTk):
         self.scenes[scene_id].pack(expand=True, fill=ctk.BOTH)
         self.current_scene = scene_id
 
+    def exit_app(self):
+         if not self.has_started:
+             return
+         if tk.messagebox.askyesno("Confirm", "Exit GexVideos?"):
+            app.account_manager.save_csv()
+            self.destroy()
+
 
 if __name__ == "__main__":
     app = StreamingApp()
+    app.protocol("WM_DELETE_WINDOW", app.exit_app())
+    app.has_started = True
     app.mainloop()
-    app.account_manager.save_csv()
-    print("exit")
+    # called when app is finished
+    
+
+
+
