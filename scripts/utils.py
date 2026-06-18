@@ -35,7 +35,7 @@ class Profile():
                 "history" : self._history}
 
     def append_history(self, media):
-        pass
+        self._history.append(media)
 
     
 

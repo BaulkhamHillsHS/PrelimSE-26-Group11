@@ -142,7 +142,7 @@ class LoginScene(Scene):
         # Password
         self.lbl_pw = ctk.CTkLabel(self._frame_main, text="Enter Password:")
         self.lbl_pw.pack(anchor=ctk.S)
-        self.ent_pw = ctk.CTkEntry(self._frame_main, placeholder_text="eg. its_tail_time")
+        self.ent_pw = ctk.CTkEntry(self._frame_main, placeholder_text="eg. its_tail_time", show="*")
         self.ent_pw.pack(expand=True)
 
         # login button
@@ -323,6 +323,7 @@ class HomeScene(Scene):
     def media_clicked(self, media_id):
         self.log_man.add_viewing_activity(self.med_man.media_list[media_id])
         self.med_man.current_viewed = media_id
+        self.acc_man.get_active_profile().append_history(media_id)
         self.app.switch_scene(self.app.VIEW)
         # switch to viewing scene(media)
     
