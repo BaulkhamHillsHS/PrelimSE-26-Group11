@@ -7,26 +7,79 @@ import encryption
 
 import data
 
+class Profile():
+    def __init__(self, data):
+        # private
+        self._name = data["name"]
+        self._age = data["age"]
+        self._history = []
+
+        # public
+        self.watchlist = data["watchlist"]
+        
+    def p_get(self, property):
+        match property:
+            case "name":
+                return self._name
+            case "age":
+                return self._age
+            case "watchlist":
+                return self.watchlist
+            case "history":
+                return self._history
+
+    def get_data(self):
+        return {"name" : self._name,
+                "age" : self._age,
+                "watchlist" : self.watchlist,
+                "history" : self._history}
+
+    def append_history(self, media):
+        pass
+
+    
+
 class Account():
     def __init__(self, data):
         # assigns each value of the row to the correct type
-        self._data = {}
-        self._data["username"] = str(data["username"])
-        self._data["email"] = str(data["email"])
+        self._username = str(data["username"])
+        self._email = str(data["email"])
         # convert byte formatted as a string to byte
-        self._data["password"] = literal_eval(data["password"])
-        self._data["plan"] = int(data["plan"])
-        self._data["payment"] = str(data["payment"])
+        self._password = literal_eval(data["password"])
+        self._plan = int(data["plan"])
+        self._payment = str(data["payment"])
         # convert list formatted as a string to list
-        self._data["profiles"] = literal_eval(data["profiles"])
+        profiles = literal_eval(data["profiles"])
+        self._profiles : list[Profile] = []
+        for profile in  profiles:
+            self._profiles.append(Profile(profile))
 
     def get_data(self):
-        return self._data
+        profile_data = []
+        for profile in self._profiles:
+            profile_data.append(profile.get_data())
+        return {"username" : self._username,
+                "email" : self._email,
+                "password" : self._password,
+                "plan" : self._plan,
+                "payment" : self._payment,
+                "profiles" : profile_data}
+
 
     def p_get(self, property):
-        if property in self._data:
-            return self._data[property]
-        else : return None
+        match property:
+            case "username":
+                return self._username
+            case "email":
+                return self._email
+            case "password":
+                return self._password
+            case "plan":
+                return self._plan
+            case "payment":
+                return self._payment
+            case "profiles":
+                return self._profiles
     
     def set_plan(self, plan):
         self._data["plan"] = plan

@@ -54,9 +54,13 @@ class StreamingApp(ctk.CTk):
         self.scenes[scene_id].pack(expand=True, fill=ctk.BOTH)
         self.current_scene = scene_id
 
+    def exit_app(self):
+         app.account_manager.save_csv()
+
 
 if __name__ == "__main__":
     app = StreamingApp()
     app.mainloop()
-    app.account_manager.save_csv()
-    print("exit")
+    app.exit_app()
+
+

@@ -186,7 +186,7 @@ class OpeningProfileScene(Scene):
         for i in range(len(account.p_get("profiles"))):
             ctk.CTkButton(
                 self._frame_main,
-                text=account.p_get("profiles")[i]["name"],
+                text=account.p_get("profiles")[i].p_get("name"),
                 command=lambda profile=i: self.profile_clicked(profile),
             ).pack()
 
@@ -221,14 +221,13 @@ class AccountScene(Scene):
             if account.p_get("profiles")[i] == self.acc_man.get_active_profile():
                 ctk.CTkButton(
                 self._frame_main,
-                text=account.p_get("profiles")[i]["name"],
-                command=lambda media=i: self.media_clicked(media),
+                text=account.p_get("profiles")[i].p_get("name"),
                 state="disabled"
                 ).pack()
             else:
                 ctk.CTkButton(
                     self._frame_main,
-                    text=account.p_get("profiles")[i]["name"],
+                    text=account.p_get("profiles")[i].p_get("name"),
                     command=lambda media=i: self.media_clicked(media),
                 ).pack()
         #plans
@@ -262,10 +261,6 @@ class AccountScene(Scene):
             self.acc_man.current_account.set_plan(plan)
             self._frame_main.destroy()
             self._build_main()
-        #todo
-        # confirmation
-        # switch acc plan
-        # print invoice
     def click_logout(self):
         if tk.messagebox.askyesno("Confirm", f"Logout of {self.acc_man.current_account.p_get("username")}?"):
             self.app.switch_scene(self.app.LOGIN)
@@ -282,7 +277,7 @@ class HomeScene(Scene):
 
     def enter_scene(self):
         if self.acc_man.current_account != {}:
-            self.med_man.ratings_filter = self.acc_man.get_active_profile()["age"]
+            self.med_man.ratings_filter = self.acc_man.get_active_profile().p_get("age")
             self.med_man.update_visible()
             self._build_list()
         else:
@@ -298,7 +293,7 @@ class HomeScene(Scene):
                 # lambda so the the command can pass a parameter
                 command=lambda media_index=index: self.media_clicked(media_index),
             ).pack()
-            if index in self.acc_man.get_active_profile()["watchlist"]:
+            if index in self.acc_man.get_active_profile().p_get("watchlist"):
                 ctk.CTkButton(self._list_frame, text="Remove from watchlist",
                     command=lambda media_index=index: self.remove_watchlist_clicked(media_index)).pack()
             else:
@@ -333,14 +328,14 @@ class HomeScene(Scene):
     
     #todo
     def add_watchlist_clicked(self, media_id):
-        self.acc_man.get_active_profile()["watchlist"].append(media_id)
+        self.acc_man.get_active_profile().p_get("watchlist").append(media_id)
         self._list_frame.destroy()
         self._build_list()
 
     def remove_watchlist_clicked(self, media_id):
-        for i in range(len(self.acc_man.get_active_profile()["watchlist"])):
+        for i in range(len(self.acc_man.get_active_profile().p_get("watchlist"))):
             if i == media_id:
-                self.acc_man.get_active_profile()["watchlist"].pop(i)
+                self.acc_man.get_active_profile().p_get("watchlist").pop(i)
                 self._list_frame.destroy()
                 self._build_list()
                 return
