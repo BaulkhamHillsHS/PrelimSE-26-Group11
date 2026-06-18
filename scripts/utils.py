@@ -172,6 +172,7 @@ class MediaManager:
         self.visible_list = []
         self.acc_man : AccountManager = account_manager
         self.current_viewed : int
+        self.is_watchlist = False
 
         for i in range(len(data.media)):
             media_data = data.media[i]
@@ -189,6 +190,9 @@ class MediaManager:
         # update list
         self.visible_list = []
         for i in range(len(self.media_list)):
+            if self.is_watchlist:
+                if i not in self.acc_man.get_active_profile().p_get("watchlist"):
+                    continue
             media : data.Media = self.media_list[i]
             if media.rating > self.ratings_filter:
                 continue
@@ -209,8 +213,7 @@ append_test_account = {
     "password": "b'gAAAAABqLUAW6jgMaaVp2I3VHapsXqb87kTx7720GtpynBb92X_QNPLbwGfsecwxrVD8yyGkmYqd1_Hg5v4Y5zPo9fvBk-0jSA=='",
     "plan": data.PREMIUM_PLAN,
     "payment": "1234567890",
-    "active_profile": 0,
-    "profiles": [{"name": "Aupen ", "age": 20, "watchlist": [0, 1, 2]}],
+    "profiles": [{"name": "Aupen ", "age": 20, "watchlist": [0, 1, 2], "history" : []}],
 }
 self._accounts.append(append_test_account)
 self.append_csv(append_test_account)

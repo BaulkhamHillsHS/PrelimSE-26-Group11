@@ -92,3 +92,5 @@ Old Plan : Basic Plan @ $9.99/month
 New Plan : Premium Plan @ $19.99/month
 ==========================================
 2026-06-18 16:29:03.236500 : a watched Gex 1 Intro Cutscene
+2026-06-18 17:24:25.812041 : a watched Gex 1 Intro Cutscene
+2026-06-18 17:24:27.512101 : a watched Gex 1 Ending Cutscene

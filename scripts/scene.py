@@ -85,8 +85,7 @@ class Header(ctk.CTkFrame):
 
     def quit_clicked(self):
         # add a confirm
-        if tk.messagebox.askyesno("Confirm", "Exit GexVideos?"):
-            self.app.destroy()
+        self.app.exit_app()
 # based on state design pattern
 class Scene(ctk.CTkFrame):
     def __init__(self, app):
