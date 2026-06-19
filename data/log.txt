@@ -95,3 +95,43 @@ New Plan : Premium Plan @ $19.99/month
 2026-06-18 17:24:25.812041 : a watched Gex 1 Intro Cutscene
 2026-06-18 17:24:27.512101 : a watched Gex 1 Ending Cutscene
 2026-06-19 02:38:55.719260 : a watched Hardcore Gex
+2026-06-19 16:01:45.138498 : a watched Gex 1 Intro Cutscene
+2026-06-19 16:01:47.160433 : a watched Gex 1 Ending Cutscene
+2026-06-19 16:01:48.474535 : a watched Gex 1 compilation
+2026-06-19 16:01:49.897380 : a watched Hardcore Gex
+2026-06-19 16:01:52.718550 : a watched Gex 1 Intro Cutscene
+2026-06-19 16:01:56.432374 : a watched Gex 1 compilation
+2026-06-19 17:53:03.521673 : a watched Gex 1 Intro Cutscene
+2026-06-19 17:54:36.748785 : a watched Gex 1 Intro Cutscene
+2026-06-19 17:54:40.521872 : a watched Gex 1 compilation
+2026-06-19 18:31:29.144148 : a watched Gex 1 Intro Cutscene
+2026-06-19 21:50:25.974414 : a watched Gex 1 Ending Cutscene
+2026-06-19 22:32:11.733793 : a watched Gex 1 Intro Cutscene
+2026-06-19 22:48:09.948449 : a watched Gex 1 Ending Cutscene
+2026-06-19 23:03:13.662217 : a watched Crystal Dynamics Intro
+2026-06-19 23:04:14.954791 : a watched Crystal Dynamics Intro
+2026-06-19 23:04:28.701638 : a watched Gex 1 Intro Cutscene
+2026-06-19 23:04:32.008676 : a watched Crystal Dynamics Intro
+2026-06-19 23:04:33.505436 : a watched Gex 1 Intro Cutscene
+2026-06-19 23:04:35.300446 : a watched Gex 1 Ending Cutscene
+2026-06-19 23:14:13.873995 : a watched Crystal Dynamics Intro
+2026-06-19 23:14:17.462574 : a watched Gex 1 Intro Cutscene
+2026-06-19 23:18:04.163807 : a watched Crystal Dynamics Intro
+2026-06-19 23:18:10.605712 : a watched Gex 1 compilation
+2026-06-19 23:21:37.835352 : a watched Crystal Dynamics Intro
+2026-06-19 23:28:37.147160 : a watched Crystal Dynamics Intro
+2026-06-19 23:39:41.964505 : a watched Crystal Dynamics Intro
+2026-06-19 23:40:00.742435 : a watched Crystal Dynamics Intro
+2026-06-19 23:40:09.503395 : a watched Crystal Dynamics Intro
+2026-06-19 23:40:11.282382 : a watched Gex 1 Intro Cutscene
+2026-06-19 23:56:59.942532 : a watched Crystal Dynamics Intro
+2026-06-19 23:57:07.133470 : a watched Crystal Dynamics Intro
+2026-06-19 23:57:09.976490 : a watched Gex 1 Intro Cutscene
+2026-06-19 23:57:13.104316 : a watched Gex 1 Ending Cutscene
+2026-06-19 23:57:15.546361 : a watched Gex 1 compilation
+2026-06-19 23:58:45.372725 : a watched Hardcore Gex
+2026-06-19 23:58:47.943284 : a watched Gex 1 compilation
+2026-06-19 23:59:47.803278 : a watched Gex 1 compilation
+2026-06-20 00:00:10.281170 : a watched Crystal Dynamics Intro
+2026-06-20 00:00:12.196549 : a watched Gex 1 Intro Cutscene
+2026-06-20 00:00:14.593000 : a watched Gex 1 Ending Cutscene

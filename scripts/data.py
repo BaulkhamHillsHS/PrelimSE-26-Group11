@@ -1,3 +1,5 @@
+import customtkinter as ctk
+from PIL import Image
 # Constants
 # Subscription Types
 BASE_PLAN = 0
@@ -52,6 +54,9 @@ MA = 15  # the scope of this project
 R = 18
 X = 18
 
+LOGO = ctk.CTkImage(light_image=Image.open("data/images/logo_light.png"),
+                    dark_image=Image.open("data/images/logo_dark.png"), size=(250, 50))
+
 rating_names = {G : "G", PG : "PG", M : "M", MA : "MA", R : "R", X : "X"}
 
 plans = [{"name" : "Basic Plan", "price": 9.99}, 
@@ -60,38 +65,42 @@ plans = [{"name" : "Basic Plan", "price": 9.99},
 # need to replace "path"s with image paths
 media = [
     {
+        "title": "Crystal Dynamics Intro",
+        "type": MOVIE,
+        "display_path": "data/images/0_Gex2_CDlogo.png",
+        "thumbnail": "data/images/0_Gex2_CDlogo.png",
+        "rating": G,
+        "genre": [GEX_1, CUTSCENE],
+    },
+    {
         "title": "Gex 1 Intro Cutscene",
         "type": MOVIE,
-        "display_path": "path",
-        "thumbnail": "path",
-        "length_sec": 1000,
+        "display_path": "data/images/1_Gex1_Intro.png",
+        "thumbnail": "data/images/1_Gex1_Intro.png",
         "rating": G,
-        "genre": [GEX, THE, GECKO],
+        "genre": [GEX_1, CUTSCENE],
     },
     {
         "title": "Gex 1 Ending Cutscene",
         "type": MOVIE,
-        "display_path": "path",
-        "thumbnail": "path",
-        "length_sec": 1000,
+        "display_path": "data/images/temp.png",
+        "thumbnail": "data/images/temp.png",
         "rating": G,
-        "genre": [GEX, THE, GECKO],
+        "genre": [GEX_1, CUTSCENE],
     },
     {
         "title": "Gex 1 compilation",
         "type": SHOW,
-        "display_path": ["path", "path2"],
-        "thumbnail": "path",
-        "length_sec": 1000,
+        "display_path": ["data/images/temp.png", "data/images/temp.png"],
+        "thumbnail": "data/images/temp.png",
         "rating": G,
         "genre": [GEX, GECKO],
     },
     {
         "title": "Hardcore Gex",
         "type": MOVIE,
-        "display_path": ["path"],
-        "thumbnail": "path",
-        "length_sec": 1000,
+        "display_path": "data/images/temp.png",
+        "thumbnail": "data/images/temp.png",
         "rating": X,
         "genre": [GEX],
     },
@@ -104,8 +113,7 @@ class Media:
         self.id = id
         self.title = media[id]["title"]
         self.display_path = media[id]["display_path"]
-        self.thumbnail = media[id]["thumbnail"]
-        self.length_sec = media[id]["length_sec"]
+        self.thumbnail = ctk.CTkImage(light_image=Image.open(media[id]["thumbnail"]), size=(320, 180))
         self.rating = media[id]["rating"]
         self.genre = media[id]["genre"]
         self.type = media[id]["type"]
@@ -120,16 +128,18 @@ class Media:
 class Movie(Media):
     def __init__(self, id):
         super().__init__(id)
-        # self.display = ctk.CTkImage(
-        #    light_image=Image.open(self.display_path), size=(30, 30)
-        # )
+        self.display = ctk.CTkImage(
+            light_image=Image.open(self.display_path), size=(640, 360)
+        )
 
 
 class Show(Media):
     def __init__(self, id):
         super().__init__(id)
-        self.display = []
-        # for path in self.display_path:
-        #    self.display.append(
-        #        ctk.CTkImage(light_image=Image.open(path), size=(30, 30))
-        #    )
+        # these currently are just place holders as viewing individual episodes is
+        # not in the scope of this project
+        self.display_list = []
+        for path in self.display_path:
+            self.display_list.append(
+                ctk.CTkImage(light_image=Image.open(path), size=(640, 360))
+            )
