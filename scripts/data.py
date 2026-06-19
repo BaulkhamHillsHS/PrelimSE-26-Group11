@@ -13,6 +13,34 @@ SUBSCRIBE = 5
 GEX = 0
 THE = 1
 GECKO = 2
+
+GEX_1 = 0
+GEX_2 = 1
+GEX_3 = 2
+GEX_TRILOGY = 3
+CUTSCENE = 4
+TRAILER = 5
+GAMEPLAY = 6
+REVIEW = 7
+COMPILATION = 8
+OTHER = 9
+
+genres = {
+    GEX_1 : "Gex 1",
+    GEX_2 : "Gex: Enter the Gecko",
+    GEX_3 : "Gex 3: Deep Cover Gecko",
+    GEX_TRILOGY : "GEX Trilogy",
+    CUTSCENE : "Cutscene",
+    TRAILER : "Trailer",
+    GAMEPLAY : "Gameplay",
+    REVIEW : "Review",
+    COMPILATION : "Compilation",
+    OTHER : "Other"
+}
+genre_list = []
+for i, j in genres.items():
+    genre_list.append(j)
+
 # types
 SHOW = 0
 MOVIE = 1

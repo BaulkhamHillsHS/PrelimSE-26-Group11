@@ -271,7 +271,7 @@ class HomeScene(Scene):
         self.med_man : MediaManager = media_manager
         self.acc_man : AccountManager = account_manager
         super().__init__(master)
-        self._list_frame = ctk.CTkScrollableFrame(self, width=380, height=700)
+        self._list_frame = None
         
 
     def enter_scene(self):
@@ -283,7 +283,8 @@ class HomeScene(Scene):
             raise ValueError("Entered homescene without an account")
         
     def _build_list(self):
-        self._list_frame.destroy() # to reset the frame
+        if self._list_frame:
+            self._list_frame.destroy() # to reset the frame
         self._list_frame = ctk.CTkScrollableFrame(self._frame_main, width=380, height=700)
         for index in self.med_man.visible_list:
 
@@ -323,17 +324,20 @@ class HomeScene(Scene):
         # currently builds a pack of labels with different metadata
         self._frame_main = ctk.CTkFrame(self, width=400, height=720)
         self._frame_main.pack()
-        
+
+        self._filter_frame = ctk.CTkFrame(self._frame_main, width=400, height=200)
+        self._filter_frame.pack()
+        self._genre_filter = ctk.CTkComboBox(self._filter_frame, values=["Filter by Catagory"] + data.genre_list,
+            command=self.category_combo).pack(expand=True)
         self._build_list()
+        
 
     def media_clicked(self, media_id):
         self.log_man.add_viewing_activity(self.med_man.media_list[media_id])
         self.med_man.current_viewed = media_id
         self.acc_man.get_active_profile().append_history(media_id)
         self.app.switch_scene(self.app.VIEW)
-        # switch to viewing scene(media)
-    
-    #todo
+
     def watchlist_clicked(self, media_id):
         if media_id not in self.acc_man.get_active_profile().p_get("watchlist"):
             self.acc_man.get_active_profile().p_get("watchlist").append(media_id)
@@ -341,6 +345,12 @@ class HomeScene(Scene):
             for i in range(len(self.acc_man.get_active_profile().p_get("watchlist"))):
                 if i == media_id:
                     self.acc_man.get_active_profile().p_get("watchlist").pop(i)
+        
+    def category_combo(self, value):
+        self.med_man.genre_filter = data.genre_list.index(value)
+        self.med_man.update_visible()
+        self._build_list()
+
 
 
 
