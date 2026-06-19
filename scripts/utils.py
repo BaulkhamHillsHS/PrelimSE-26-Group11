@@ -135,7 +135,7 @@ class AccountManager:
         with open(self.CSV_PATH, "w", newline="") as csvfile:
             writer = csv.DictWriter(csvfile, self.FIELDS)
             writer.writeheader()
-            for account in self._accounts:
+            for account in self._account_data:
                 writer.writerow(account.get_data())
 
     def load_csv(self):

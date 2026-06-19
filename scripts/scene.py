@@ -53,17 +53,11 @@ class Header(ctk.CTkFrame):
         self.columnconfigure((0,1,2,3), weight=1)
         
         # load image and display logo label containing image
-        self.img_logo = ctk.CTkImage(
-            light_image=Image.open("data/images/Gex2Cover.jpg"), size=(80, 80)
-        )
         # text=' ' (single space) to not display default 'CTkLabel' text on label
-        self.lbl_logo = ctk.CTkLabel(self, text=" ", image=self.img_logo,width=80)
+        self.lbl_logo = ctk.CTkLabel(self, text=" ", image=data.LOGO,width=80)
         self.lbl_logo.grid(row=0, column=0, sticky="w")
 
-        self.lbl_title = ctk.CTkLabel(
-            self, text="GEx VIDEos", font=("Comic Sans MS", 20)
-        )
-        self.lbl_title.grid(row=0, column=1, sticky="w")
+
 
         if build_navbar:
             self.navbar = ctk.CTkFrame(self, width=200, height=100)
@@ -291,7 +285,8 @@ class HomeScene(Scene):
             # watch button
             ctk.CTkButton(
                 self._list_frame,
-                text=self.med_man.media_list[index].title,
+                text="",
+                image=self.med_man.media_list[index].thumbnail,
                 # lambda so the the command can pass a parameter
                 command=lambda media_index=index: self.media_clicked(media_index),
             ).pack()
@@ -306,13 +301,12 @@ class HomeScene(Scene):
 
             genres = []
             for genre in self.med_man.media_list[index].genre:
-                genres.append(str(genre))
+                genres.append(data.genres[genre])
 
             text = f"""\
 {self.med_man.media_list[index].title}
-{self.med_man.media_list[index].length_sec} seconds
 {self.med_man.media_list[index].rating} or above only
-{' '.join(genres)}"""
+{', '.join(genres)}"""
             
             ctk.CTkLabel(self._list_frame,text=text,).pack()
         self._list_frame.pack()
@@ -371,13 +365,17 @@ class HomeScene(Scene):
 class ViewMediaScene(Scene):
     def __init__(self, master, media_manager):
         self.med_man : MediaManager = media_manager
+        self._frame_main = None
         super().__init__(master)
 
     def enter_scene(self):
-        self.test.configure(text=self.med_man.media_list[self.med_man.current_viewed].title)
+        self.build_main()
 
-    def build_frame(self):
-        self._build_header()
+    def build_main(self):
+        if self._frame_main:
+            self._frame_main.destroy() # to reset the frame
+        self._frame_main = ctk.CTkFrame(self, width=400, height=200)
+        self._frame_main.pack()
         if self.med_man.media_list[self.med_man.current_viewed].type == data.MOVIE:
             self._build_movie()
         else:
@@ -385,11 +383,19 @@ class ViewMediaScene(Scene):
 
     def _build_movie(self):
         # currently builds a pack of labels with different metadata
-        self.test = ctk.CTkLabel(self, text=self.med_man.media_list[self.med_man.current_viewed].title)
-        self.test.pack()
+        ctk.CTkLabel(
+                self._frame_main,
+                text="",
+                image=self.med_man.media_list[self.med_man.current_viewed].display,
+            ).pack()
+        ctk.CTkLabel(self._frame_main, text=self.med_man.media_list[self.med_man.current_viewed].title).pack()
 
     def _build_show(self):
         # currently builds a pack of labels with different metadata
-        self.test = ctk.CTkLabel(self, text=self.med_man.media_list[self.med_man.current_viewed].title)
-        self.test.pack()
+        ctk.CTkLabel(
+                self._frame_main,
+                text="",
+                image=self.med_man.media_list[self.med_man.current_viewed].display_list[0],
+            ).pack()
+        ctk.CTkLabel(self._frame_main, text=self.med_man.media_list[self.med_man.current_viewed].title).pack()
 
