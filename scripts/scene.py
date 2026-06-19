@@ -297,13 +297,11 @@ class HomeScene(Scene):
             ).pack()
 
             # add/remove watchlist
-            check_state = ctk.IntVar(value=1, )
+            checked_state = ctk.IntVar(value=0)
             if index in self.acc_man.get_active_profile().p_get("watchlist"):
-                ctk.CTkCheckBox(self._list_frame, text="Watchlist",variable=check_state,
-                    command=lambda media_index=index: self.watchlist_clicked(media_index)).pack()
-            else:
-                ctk.CTkCheckBox(self._list_frame, text="Watchlist", 
-                    command=lambda media_index=index: self.watchlist_clicked(media_index)).pack()
+                checked_state = ctk.IntVar(value=1)
+            ctk.CTkCheckBox(self._list_frame, text="Watchlist", variable=checked_state, 
+                command=lambda media_index=index: self.watchlist_clicked(media_index)).pack()
                 
 
             genres = []
@@ -327,8 +325,12 @@ class HomeScene(Scene):
 
         self._filter_frame = ctk.CTkFrame(self._frame_main, width=400, height=200)
         self._filter_frame.pack()
+
+        self._watchlist_switch = ctk.CTkSwitch(self._filter_frame, text="Watchlist",
+            command=self.watchlist_switched).grid(row=0, column=0)
+
         self._genre_filter = ctk.CTkComboBox(self._filter_frame, values=["Filter by Catagory"] + data.genre_list,
-            command=self.category_combo).pack(expand=True)
+            command=self.category_combo).grid(row=0, column=1)
         self._build_list()
         
 
@@ -336,21 +338,33 @@ class HomeScene(Scene):
         self.log_man.add_viewing_activity(self.med_man.media_list[media_id])
         self.med_man.current_viewed = media_id
         self.acc_man.get_active_profile().append_history(media_id)
+        # removed from watchlist if in watchlist
+        if media_id in self.acc_man.get_active_profile().p_get("watchlist"):
+            index = self.acc_man.get_active_profile().p_get("watchlist").index(media_id)
+            self.acc_man.get_active_profile().watchlist.pop(index)
         self.app.switch_scene(self.app.VIEW)
 
     def watchlist_clicked(self, media_id):
         if media_id not in self.acc_man.get_active_profile().p_get("watchlist"):
-            self.acc_man.get_active_profile().p_get("watchlist").append(media_id)
+            self.acc_man.get_active_profile().watchlist.append(media_id)
         else:
-            for i in range(len(self.acc_man.get_active_profile().p_get("watchlist"))):
-                if i == media_id:
-                    self.acc_man.get_active_profile().p_get("watchlist").pop(i)
-        
+            index = self.acc_man.get_active_profile().p_get("watchlist").index(media_id)
+            self.acc_man.get_active_profile().watchlist.pop(index)
+
+
+    
     def category_combo(self, value):
-        self.med_man.genre_filter = data.genre_list.index(value)
+        if value == "Filter by Catagory":
+            self.med_man.genre_filter = None
+        else:
+            self.med_man.genre_filter = data.genre_list.index(value)
         self.med_man.update_visible()
         self._build_list()
 
+    def watchlist_switched(self):
+        self.med_man.is_watchlist = not self.med_man.is_watchlist
+        self.med_man.update_visible()
+        self._build_list()
 
 
 

@@ -95,3 +95,12 @@ New Plan : Premium Plan @ $19.99/month
 2026-06-18 17:24:25.812041 : a watched Gex 1 Intro Cutscene
 2026-06-18 17:24:27.512101 : a watched Gex 1 Ending Cutscene
 2026-06-19 02:38:55.719260 : a watched Hardcore Gex
+2026-06-19 16:01:45.138498 : a watched Gex 1 Intro Cutscene
+2026-06-19 16:01:47.160433 : a watched Gex 1 Ending Cutscene
+2026-06-19 16:01:48.474535 : a watched Gex 1 compilation
+2026-06-19 16:01:49.897380 : a watched Hardcore Gex
+2026-06-19 16:01:52.718550 : a watched Gex 1 Intro Cutscene
+2026-06-19 16:01:56.432374 : a watched Gex 1 compilation
+2026-06-19 17:53:03.521673 : a watched Gex 1 Intro Cutscene
+2026-06-19 17:54:36.748785 : a watched Gex 1 Intro Cutscene
+2026-06-19 17:54:40.521872 : a watched Gex 1 compilation

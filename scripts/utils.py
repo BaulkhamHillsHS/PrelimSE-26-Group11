@@ -15,7 +15,9 @@ class Profile():
         self._history = []
 
         # public
-        self.watchlist = data["watchlist"]
+        self.watchlist = []
+        for watch in data["watchlist"]:
+            self.watchlist.append(int(watch))
         
     def p_get(self, property):
         match property:
@@ -29,6 +31,7 @@ class Profile():
                 return self._history
 
     def get_data(self):
+        print(self._name, self.watchlist)
         return {"name" : self._name,
                 "age" : self._age,
                 "watchlist" : self.watchlist,
