@@ -182,7 +182,7 @@ class MediaManager:
                 self.media_list.append(data.Show(i))
             self.visible_list.append(i)
 
-        self.genre_filter = [data.GEX, data.THE, data.GECKO]
+        self.genre_filter = None
         self.type_filter = [data.MOVIE, data.SHOW]
         self.ratings_filter = data.X
 
@@ -198,11 +198,12 @@ class MediaManager:
                 continue
             if media.type not in self.type_filter:
                 continue
-            for genre in media.genre:
-                if genre in self.genre_filter:
-                    break
-            else:
-                continue
+            if self.genre_filter != None:
+                for genre in media.genre:
+                    if genre == self.genre_filter:
+                        break
+                else:
+                    continue
             self.visible_list.append(i)
 
 
