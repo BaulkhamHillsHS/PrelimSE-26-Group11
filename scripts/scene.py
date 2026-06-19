@@ -182,10 +182,10 @@ class OpeningProfileScene(Scene):
         self._frame_main = ctk.CTkFrame(self, width=400, height=200)
         self._frame_main.pack()
         account = self.acc_man.current_account
-        for i in range(len(account.p_get("profiles"))):
+        for i in range(len(account.get("profiles"))):
             ctk.CTkButton(
                 self._frame_main,
-                text=account.p_get("profiles")[i].p_get("name"),
+                text=account.get("profiles")[i].get("name"),
                 command=lambda profile=i: self.profile_clicked(profile),
             ).pack()
 
@@ -212,27 +212,27 @@ class AccountScene(Scene):
         self._frame_main.pack()
         account = self.acc_man.current_account
 
-        self.lbl_account = ctk.CTkLabel(self._frame_main, text=account.p_get("username")).pack()
+        self.lbl_account = ctk.CTkLabel(self._frame_main, text=account.get("username")).pack()
         #profile
         self.lbl_profiles = ctk.CTkLabel(self._frame_main, text="profiles").pack()
         #profile buttons
-        for i in range(len(account.p_get("profiles"))):
-            if account.p_get("profiles")[i] == self.acc_man.get_active_profile():
+        for i in range(len(account.get("profiles"))):
+            if account.get("profiles")[i] == self.acc_man.get_active_profile():
                 ctk.CTkButton(
                 self._frame_main,
-                text=account.p_get("profiles")[i].p_get("name"),
+                text=account.get("profiles")[i].get("name"),
                 state="disabled"
                 ).pack()
             else:
                 ctk.CTkButton(
                     self._frame_main,
-                    text=account.p_get("profiles")[i].p_get("name"),
+                    text=account.get("profiles")[i].get("name"),
                     command=lambda media=i: self.media_clicked(media),
                 ).pack()
         #plans
         self.lbl_plan = ctk.CTkLabel(self._frame_main, text="plans").pack()
         for i in range(len(data.plans)):
-            if account.p_get("plan") == i:
+            if account.get("plan") == i:
                 ctk.CTkButton(
                 self._frame_main,
                 text=data.plans[i]["name"],
@@ -256,12 +256,12 @@ class AccountScene(Scene):
 
     def plan_clicked(self, plan):
         if tk.messagebox.askyesno("Confirm", f"Switch to {data.plans[plan]["name"]} Plan?"):
-            self.log_man.add_subscription_activity(self.acc_man.current_account.p_get("plan"), plan)
+            self.log_man.add_subscription_activity(self.acc_man.current_account.get("plan"), plan)
             self.acc_man.current_account.set_plan(plan)
             self._frame_main.destroy()
             self._build_main()
     def click_logout(self):
-        if tk.messagebox.askyesno("Confirm", f"Logout of {self.acc_man.current_account.p_get("username")}?"):
+        if tk.messagebox.askyesno("Confirm", f"Logout of {self.acc_man.current_account.get("username")}?"):
             self.app.switch_scene(self.app.LOGIN)
 
 
@@ -276,7 +276,7 @@ class HomeScene(Scene):
 
     def enter_scene(self):
         if self.acc_man.current_account != {}:
-            self.med_man.ratings_filter = self.acc_man.get_active_profile().p_get("age")
+            self.med_man.ratings_filter = self.acc_man.get_active_profile().get("age")
             self.med_man.update_visible()
             self._build_list()
         else:
@@ -298,7 +298,7 @@ class HomeScene(Scene):
 
             # add/remove watchlist
             checked_state = ctk.IntVar(value=0)
-            if index in self.acc_man.get_active_profile().p_get("watchlist"):
+            if index in self.acc_man.get_active_profile().get("watchlist"):
                 checked_state = ctk.IntVar(value=1)
             ctk.CTkCheckBox(self._list_frame, text="Watchlist", variable=checked_state, 
                 command=lambda media_index=index: self.watchlist_clicked(media_index)).pack()
@@ -339,16 +339,16 @@ class HomeScene(Scene):
         self.med_man.current_viewed = media_id
         self.acc_man.get_active_profile().append_history(media_id)
         # removed from watchlist if in watchlist
-        if media_id in self.acc_man.get_active_profile().p_get("watchlist"):
-            index = self.acc_man.get_active_profile().p_get("watchlist").index(media_id)
+        if media_id in self.acc_man.get_active_profile().get("watchlist"):
+            index = self.acc_man.get_active_profile().get("watchlist").index(media_id)
             self.acc_man.get_active_profile().watchlist.pop(index)
         self.app.switch_scene(self.app.VIEW)
 
     def watchlist_clicked(self, media_id):
-        if media_id not in self.acc_man.get_active_profile().p_get("watchlist"):
+        if media_id not in self.acc_man.get_active_profile().get("watchlist"):
             self.acc_man.get_active_profile().watchlist.append(media_id)
         else:
-            index = self.acc_man.get_active_profile().p_get("watchlist").index(media_id)
+            index = self.acc_man.get_active_profile().get("watchlist").index(media_id)
             self.acc_man.get_active_profile().watchlist.pop(index)
 
 
@@ -376,7 +376,19 @@ class ViewMediaScene(Scene):
     def enter_scene(self):
         self.test.configure(text=self.med_man.media_list[self.med_man.current_viewed].title)
 
-    def _build_main(self):
+    def build_frame(self):
+        self._build_header()
+        if self.med_man.media_list[self.med_man.current_viewed].type == data.MOVIE:
+            self._build_movie()
+        else:
+            self._build_show()
+
+    def _build_movie(self):
+        # currently builds a pack of labels with different metadata
+        self.test = ctk.CTkLabel(self, text=self.med_man.media_list[self.med_man.current_viewed].title)
+        self.test.pack()
+
+    def _build_show(self):
         # currently builds a pack of labels with different metadata
         self.test = ctk.CTkLabel(self, text=self.med_man.media_list[self.med_man.current_viewed].title)
         self.test.pack()

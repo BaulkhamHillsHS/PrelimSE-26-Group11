@@ -19,7 +19,7 @@ class Profile():
         for watch in data["watchlist"]:
             self.watchlist.append(int(watch))
         
-    def p_get(self, property):
+    def get(self, property):
         match property:
             case "name":
                 return self._name
@@ -45,17 +45,21 @@ class Profile():
 class Account():
     def __init__(self, data):
         # assigns each value of the row to the correct type
-        self._username = str(data["username"])
-        self._email = str(data["email"])
+        self._username = data["username"]
+        self._email = data["email"]
         # convert byte formatted as a string to byte
-        self._password = literal_eval(data["password"])
-        self._plan = int(data["plan"])
-        self._payment = str(data["payment"])
+        self._password = data["password"]
+        self._plan = data["plan"]
+        self._payment = data["payment"]
         # convert list formatted as a string to list
-        profiles = literal_eval(data["profiles"])
+        profiles = data["profiles"]
         self._profiles : list[Profile] = []
         for profile in  profiles:
             self._profiles.append(Profile(profile))
+    
+    def __del__(self):
+        for profile in self._profiles:
+            del profile
 
     def get_data(self):
         profile_data = []
@@ -69,7 +73,7 @@ class Account():
                 "profiles" : profile_data}
 
 
-    def p_get(self, property):
+    def get(self, property):
         match property:
             case "username":
                 return self._username
@@ -97,23 +101,25 @@ class AccountManager:
         self.CSV_PATH = "data/accounts.csv"
         self.FIELDS = ["username", "email", "password", "plan", "payment", "profiles"]
         # index of current account
-        self.current_account = {}
+        self.current_account = None
         self._accounts = []
         self._profile = 0
+        self._account_data = []
 
     # attempts to login
     def login(self, username, password) -> int:
-        for account in self._accounts:
-            if account.p_get("username") != username and account.p_get("email") != username:
+        for account in self._account_data:
+            if account["username"] != username and account["email"] != username:
                 continue
-            if encryption.validate_password(account.p_get("password"), password):
-                self.current_account = account
+            if encryption.validate_password(account["password"], password):
+                self.current_account = Account(account)
                 return self.LOGIN_SUCCESS
             return self.LOGIN_PASS_ERR
         return self.LOGIN_USER_ERR
 
     def logout(self):
-        self.current_account = {}
+        del self.current_account
+        self.current_account = None
         # switch to login screen
 
     def set_profile(self, profile):
@@ -122,7 +128,7 @@ class AccountManager:
         # update content filters
 
     def get_active_profile(self):
-        return self.current_account.p_get("profiles")[self._profile]
+        return self.current_account.get("profiles")[self._profile]
 
 
     def save_csv(self):
@@ -137,7 +143,17 @@ class AccountManager:
         with open(self.CSV_PATH, "r", newline="") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
-                self._accounts.append(Account(row))
+                row_data = {}
+                # assigns each value of the row to the correct type
+                row_data["username"] = str(row["username"])
+                row_data["email"] = str(row["email"])
+                # convert byte formatted as a string to byte
+                row_data["password"] = literal_eval(row["password"])
+                row_data["plan"] = int(row["plan"])
+                row_data["payment"] = str(row["payment"])
+                # convert list formatted as a string to list
+                row_data["profiles"] = literal_eval(row["profiles"])
+                self._account_data.append(row_data)
 
     def append_csv(self, new_account):
         with open(self.CSV_PATH, "a", newline="") as csvfile:
@@ -153,15 +169,15 @@ class LogManager:
     def add_viewing_activity(self, media) -> None:
         with open(self.path, "a") as f:
             f.write(
-                f"{datetime.datetime.now()} : {self.acc_man.current_account.p_get('username')} watched {media.title}\n"
+                f"{datetime.datetime.now()} : {self.acc_man.current_account.get('username')} watched {media.title}\n"
             )
 
     def add_subscription_activity(self, current_plan, new_plan) -> None:
         with open(self.path, "a") as f:
             f.write(f"""==========================================
 Invoice for change in subscription plan
-Account name : {self.acc_man.current_account.p_get("username")}
-Payment Credentials : {self.acc_man.current_account.p_get("playment")}
+Account name : {self.acc_man.current_account.get("username")}
+Payment Credentials : {self.acc_man.current_account.get("playment")}
 Date : {datetime.date.today()}
 Old Plan : {data.plans[current_plan]["name"]} @ ${data.plans[current_plan]["price"]}/month
 New Plan : {data.plans[new_plan]["name"]} @ ${data.plans[new_plan]["price"]}/month
@@ -194,7 +210,7 @@ class MediaManager:
         self.visible_list = []
         for i in range(len(self.media_list)):
             if self.is_watchlist:
-                if i not in self.acc_man.get_active_profile().p_get("watchlist"):
+                if i not in self.acc_man.get_active_profile().get("watchlist"):
                     continue
             media : data.Media = self.media_list[i]
             if media.rating > self.ratings_filter:
