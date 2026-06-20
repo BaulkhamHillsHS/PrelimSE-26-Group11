@@ -228,11 +228,13 @@ class HomeScene(Scene):
         self.library : Library = media_manager
         self.acc_man : AccountManager = account_manager
         super().__init__(master)
+        self._frame_main = ctk.CTkFrame(self, width=1280, height=720)
+        self._scroll_frame = ctk.CTkScrollableFrame(self._frame_main, width=1280, height=720)
         self._list_frame = None
         
 
     def enter_scene(self):
-        if self.acc_man.current_account != {}:
+        if self.acc_man.current_account != None:
             self.library.ratings_filter = self.acc_man.get_active_profile().get("age")
             self.library.update_visible()
             self._build_list()
@@ -242,21 +244,22 @@ class HomeScene(Scene):
     def _build_list(self):
         if self._list_frame:
             self._list_frame.destroy() # to reset the frame
-        self._list_frame = ctk.CTkScrollableFrame(self._frame_main, width=1008, height=700)
+        self._list_frame = ctk.CTkFrame(self._scroll_frame, width=1008, height=500)
 
         card_count = 0
+        ctk.CTkLabel(self._list_frame, text="test")
         for index in self.library.visible_list:
             # In the future adding a way to cache cards or image lables would help
             # optimise loading speed
 
             # loading the thumbnails asynchronously would also get rid of the long stall
             # when building the scene
-            self._media_card = ctk.CTkFrame(self._list_frame, width=336, height=240)
-            self._media_card.grid(row = card_count//3, column = card_count % 3)
+            media_card = ctk.CTkFrame(self._list_frame, width=336, height=240)
+            media_card.grid(row = card_count//3, column = card_count % 3)
 
             # watch button
             ctk.CTkButton(
-                self._media_card,
+                media_card,
                 text="",
                 image=self.library.media_list[index].thumbnail, 
                 fg_color="transparent",
@@ -269,7 +272,7 @@ class HomeScene(Scene):
             checked_state = ctk.IntVar(value=0)
             if index in self.acc_man.get_active_profile().get("watchlist"):
                 checked_state = ctk.IntVar(value=1)
-            ctk.CTkCheckBox(self._media_card, text="Watchlist", variable=checked_state, 
+            ctk.CTkCheckBox(media_card, text="Watchlist", variable=checked_state, 
                 command=lambda media_index=index: self.watchlist_clicked(media_index)).pack()
                 
             # media description
@@ -281,14 +284,14 @@ class HomeScene(Scene):
 {self.library.media_list[index].rating} or above only
 {', '.join(genres)}"""
             
-            ctk.CTkLabel(self._media_card,text=text,).pack()
+            ctk.CTkLabel(media_card,text=text,).pack()
             card_count += 1
         self._list_frame.pack()
 
 
     def _build_main(self):
         # currently builds a pack of labels with different metadata
-        self._frame_main = ctk.CTkFrame(self, width=400, height=720)
+        
         self._frame_main.pack()
 
         self._filter_frame = ctk.CTkFrame(self._frame_main, width=400, height=200)
@@ -299,7 +302,8 @@ class HomeScene(Scene):
 
         self._genre_filter = ctk.CTkComboBox(self._filter_frame, values=["Filter by Catagory"] + data.genre_list,
             command=self.category_combo).grid(row=0, column=1)
-        self._build_list()
+        
+        self._scroll_frame.pack()
         
 
     def media_clicked(self, media_id):
