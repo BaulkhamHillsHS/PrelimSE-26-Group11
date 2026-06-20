@@ -28,10 +28,9 @@ class Header(ctk.CTkFrame):
             self.btn_home.grid(row=0, column=0, padx=4)
             self.btn_profiles = ctk.CTkButton(self.navbar, width=70, text="Account", command=self.click_account)
             self.btn_profiles.grid(row=0, column=1, padx=4)
-            self.navbar.grid(row=0, column=2, sticky="w")
+            self.navbar.grid(row=0, column=2, sticky="e")
 
-        self.btn_home = ctk.CTkButton(self, width=70, text="Quit", command=self.quit_clicked)
-        self.btn_home.grid(row=0, column=3, padx=4, sticky="e")
+
 
     def click_home(self):
         self.app.switch_scene(self.app.HOME)
@@ -39,9 +38,7 @@ class Header(ctk.CTkFrame):
     def click_account(self):
         self.app.switch_scene(self.app.ACCOUNT)
 
-    def quit_clicked(self):
-        # add a confirm
-        self.app.exit_app()
+
 
 
 # based on state design pattern

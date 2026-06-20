@@ -68,7 +68,7 @@ class StreamingApp(ctk.CTk):
 
 if __name__ == "__main__":
     app = StreamingApp()
-    app.protocol("WM_DELETE_WINDOW", app.exit_app())
+    app.protocol("WM_DELETE_WINDOW", app.exit_app)
     app.has_started = True
     app.mainloop()
     
