@@ -31,7 +31,6 @@ class Profile():
                 return self._history
 
     def get_data(self):
-        print(self._name, self.watchlist)
         return {"name" : self._name,
                 "age" : self._age,
                 "watchlist" : self.watchlist,
@@ -103,22 +102,30 @@ class AccountManager:
         self.FIELDS = ["username", "email", "password", "plan", "payment", "profiles"]
         # index of current account
         self.current_account = None
+        self._current_account_index = None
         self._accounts = []
         self._profile = 0
         self._account_data = []
 
     # attempts to login
     def login(self, username, password) -> int:
-        for account in self._account_data:
+        for i in range(len(self._account_data)):
+            account = self._account_data[i]
             if account["username"] != username and account["email"] != username:
                 continue
             if encryption.validate_password(account["password"], password):
+                if self._current_account_index:
+                    self._account_data[self._current_account_index] = self.current_account.get_data()
+
                 self.current_account = Account(account)
+                self._current_account_index = i
                 return self.LOGIN_SUCCESS
             return self.LOGIN_PASS_ERR
         return self.LOGIN_USER_ERR
 
     def logout(self):
+        if self._current_account_index:
+            self._account_data[self._current_account_index] = self.current_account.get_data()
         del self.current_account
         self.current_account = None
         # switch to login screen
@@ -133,11 +140,13 @@ class AccountManager:
 
 
     def save_csv(self):
+        if self._current_account_index:
+            self._account_data[self._current_account_index] = self.current_account.get_data()
         with open(self.CSV_PATH, "w", newline="") as csvfile:
             writer = csv.DictWriter(csvfile, self.FIELDS)
             writer.writeheader()
             for account in self._account_data:
-                writer.writerow(account.get_data())
+                writer.writerow(account)
 
     def load_csv(self):
         self._accounts = []

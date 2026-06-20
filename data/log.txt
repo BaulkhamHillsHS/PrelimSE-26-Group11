@@ -135,3 +135,23 @@ New Plan : Premium Plan @ $19.99/month
 2026-06-20 00:00:10.281170 : a watched Crystal Dynamics Intro
 2026-06-20 00:00:12.196549 : a watched Gex 1 Intro Cutscene
 2026-06-20 00:00:14.593000 : a watched Gex 1 Ending Cutscene
+2026-06-20 00:37:37.011773 : a watched Crystal Dynamics Intro
+2026-06-20 01:16:41.410883 : a watched Crystal Dynamics Intro
+2026-06-20 01:24:50.043678 : a watched Crystal Dynamics Intro
+2026-06-20 01:25:48.473421 : a watched Crystal Dynamics Intro
+2026-06-20 01:26:04.766085 : a watched Crystal Dynamics Intro
+2026-06-20 01:26:06.702980 : a watched Gex 1 Intro Cutscene
+2026-06-20 01:26:08.085984 : a watched Gex 1 Ending Cutscene
+2026-06-20 01:28:35.131157 : a watched Crystal Dynamics Intro
+2026-06-20 01:28:39.576067 : a watched Gex 1 Intro Cutscene
+2026-06-20 01:28:43.030495 : a watched Gex 1 Ending Cutscene
+2026-06-20 01:29:15.196861 : a watched Gex 1 Ending Cutscene
+2026-06-20 01:29:19.772660 : a watched Gex 1 Intro Cutscene
+2026-06-20 01:34:12.184727 : a watched Crystal Dynamics Intro
+2026-06-20 01:34:38.777441 : a watched Crystal Dynamics Intro
+2026-06-20 01:34:59.376493 : a watched Gex 1 Ending Cutscene
+2026-06-20 18:10:15.849956 : a watched Gex Letsplay Series
+2026-06-20 18:10:31.234902 : a watched Gex 1 Ending Cutscene
+2026-06-20 18:35:37.395630 : a watched Gex 1 compilation
+2026-06-20 19:08:01.184033 : a watched Gex Trilogy: Review
+2026-06-20 19:13:34.531134 : a watched Crystal Dynamics Intro

@@ -3,46 +3,7 @@ import tkinter as tk
 from PIL import Image
 from utils import *
 
-class Navbar(ctk.CTkFrame):
-    """Navigation bar containing buttons with links to different scenes."""
 
-    def __init__(self, master, stream_app):
-        super().__init__(master)
-        self.stream_app = stream_app
-        self.btn_home = ctk.CTkButton(self, width=70, text="Home", command=self.click_home)
-        self.btn_home.grid(row=0, column=0, padx=4)
-        self.btn_profiles = ctk.CTkButton(self, width=70, text="Account", command=self.click_account)
-        self.btn_profiles.grid(row=0, column=1, padx=4)
-
-    # yes, these are hardcoded. don't ask me how long I wasted trying to avoid this
-    
-
-    def click_home(self):
-        self.stream_app.switch_scene(self.stream_app.HOME)
-        
-    def click_profiles(self):
-        self.stream_app.switch_scene(self.stream_app.PROFILE)
-
-    def click_account(self):
-        self.stream_app.switch_scene(self.stream_app.ACCOUNT)
-
-class FilterBar(ctk.CTkFrame):
-    def __init__(self, master, genres: list[str]=["gex", "the", "gecko"]):
-        super().__init__(master)
-        ctk.CTkLabel(self, text="Filter by:").grid(row=0, column=0, padx=20)
-        # by default will be set to "all" upon creation
-        # all is created by the method and does not have to be passed in in the list of genres
-        self.radio_var = tk.IntVar(value=0)
-        genres.insert(0, "all")
-        for i in range(len(genres)):
-            radio = ctk.CTkRadioButton(self,text=genres[i], variable=self.radio_var, value=i, command=self.radio_clicked)
-            radio.grid(row=0, column=i+1)
-    
-    def radio_clicked(self):
-        ##### add updating of the filters/visible media cards etc.
-        # radio_var.get() carries the int value of the genre (the int value of the radio button)
-        print(self.radio_var.get())
-        
 
 class Header(ctk.CTkFrame):
     def __init__(self, scene, app, build_navbar = True):
@@ -124,7 +85,7 @@ class LoginScene(Scene):
     def _build_main(self):
         """Build a simple username and password form with a title and a button that links to HomeScene."""
         self._frame_main = ctk.CTkFrame(self, width=400, height=400)
-        self._frame_main.pack(expand=True, fill=ctk.Y)
+        self._frame_main.pack(expand=True)
 
         # Username
         self.lbl_username = ctk.CTkLabel(self._frame_main, text="Enter Username:")
@@ -288,14 +249,23 @@ class HomeScene(Scene):
     def _build_list(self):
         if self._list_frame:
             self._list_frame.destroy() # to reset the frame
-        self._list_frame = ctk.CTkScrollableFrame(self._frame_main, width=380, height=700)
+        self._list_frame = ctk.CTkScrollableFrame(self._frame_main, width=1008, height=700)
+        card_count = 0
         for index in self.med_man.visible_list:
+            # In the future adding a way to cache cards or image lables would help
+            # optimise loading speed
 
+            # loading the thumbnails asynchronously would also get rid of the long stall
+            # when building the scene
+            self._media_card = ctk.CTkFrame(self._list_frame, width=336, height=240)
+            self._media_card.grid(row = card_count//3, column = card_count % 3)
             # watch button
             ctk.CTkButton(
-                self._list_frame,
+                self._media_card,
                 text="",
-                image=self.med_man.media_list[index].thumbnail,
+                image=self.med_man.media_list[index].thumbnail, 
+                fg_color="transparent",
+                bg_color="transparent",
                 # lambda so the the command can pass a parameter
                 command=lambda media_index=index: self.media_clicked(media_index),
             ).pack()
@@ -304,7 +274,7 @@ class HomeScene(Scene):
             checked_state = ctk.IntVar(value=0)
             if index in self.acc_man.get_active_profile().get("watchlist"):
                 checked_state = ctk.IntVar(value=1)
-            ctk.CTkCheckBox(self._list_frame, text="Watchlist", variable=checked_state, 
+            ctk.CTkCheckBox(self._media_card, text="Watchlist", variable=checked_state, 
                 command=lambda media_index=index: self.watchlist_clicked(media_index)).pack()
                 
 
@@ -317,7 +287,8 @@ class HomeScene(Scene):
 {self.med_man.media_list[index].rating} or above only
 {', '.join(genres)}"""
             
-            ctk.CTkLabel(self._list_frame,text=text,).pack()
+            ctk.CTkLabel(self._media_card,text=text,).pack()
+            card_count += 1
         self._list_frame.pack()
 
 
@@ -353,6 +324,9 @@ class HomeScene(Scene):
         else:
             index = self.acc_man.get_active_profile().get("watchlist").index(media_id)
             self.acc_man.get_active_profile().watchlist.pop(index)
+            if self.med_man.is_watchlist:
+                self.med_man.update_visible()
+                self._build_list()
 
 
     
