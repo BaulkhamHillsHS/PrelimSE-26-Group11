@@ -142,3 +142,11 @@ New Plan : Premium Plan @ $19.99/month
 2026-06-20 01:26:04.766085 : a watched Crystal Dynamics Intro
 2026-06-20 01:26:06.702980 : a watched Gex 1 Intro Cutscene
 2026-06-20 01:26:08.085984 : a watched Gex 1 Ending Cutscene
+2026-06-20 01:28:35.131157 : a watched Crystal Dynamics Intro
+2026-06-20 01:28:39.576067 : a watched Gex 1 Intro Cutscene
+2026-06-20 01:28:43.030495 : a watched Gex 1 Ending Cutscene
+2026-06-20 01:29:15.196861 : a watched Gex 1 Ending Cutscene
+2026-06-20 01:29:19.772660 : a watched Gex 1 Intro Cutscene
+2026-06-20 01:34:12.184727 : a watched Crystal Dynamics Intro
+2026-06-20 01:34:38.777441 : a watched Crystal Dynamics Intro
+2026-06-20 01:34:59.376493 : a watched Gex 1 Ending Cutscene
