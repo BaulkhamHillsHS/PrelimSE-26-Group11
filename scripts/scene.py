@@ -243,6 +243,11 @@ class HomeScene(Scene):
         self._list_frame = ctk.CTkScrollableFrame(self._frame_main, width=1008, height=700)
         card_count = 0
         for index in self.med_man.visible_list:
+            # In the future adding a way to cache cards or image lables would help
+            # optimise loading speed
+
+            # loading the thumbnails asynchronously would also get rid of the long stall
+            # when building the scene
             self._media_card = ctk.CTkFrame(self._list_frame, width=336, height=240)
             self._media_card.grid(row = card_count//3, column = card_count % 3)
             # watch button
