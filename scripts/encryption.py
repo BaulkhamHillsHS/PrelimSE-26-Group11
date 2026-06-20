@@ -1,7 +1,8 @@
 from cryptography.fernet import Fernet
 
 # assume this some kind of serverside encryption system
-
+# The password for each account is encrypted using fernet beforehand
+# This could probably also be done to other sensitive info
 
 # made from Fernet.generate_key()
 key = "izT5hls4qlm_rmXk635kVyulwuaEc9xo-1pzPOzeRfQ=".encode()

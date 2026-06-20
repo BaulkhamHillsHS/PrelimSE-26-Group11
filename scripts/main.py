@@ -22,8 +22,8 @@ class StreamingApp(ctk.CTk):
         # managers
         self.account_manager = utils.AccountManager()
         self.account_manager.load_csv()
-        self.log_manager = utils.LogManager(self.account_manager)
-        self.media_manager = utils.MediaManager(self.account_manager)
+        self.logger = utils.Logger(self.account_manager)
+        self.library = utils.Library(self.account_manager)
 
         self.title("GEX VIDEOS Streaming App Jeremy Guillermo")
         self.geometry("1024x576")
@@ -31,14 +31,13 @@ class StreamingApp(ctk.CTk):
 
         self.scenes: dict[int, scene.Scene] = {
             self.LOGIN: scene.LoginScene(self, self.account_manager),
-            self.HOME: scene.HomeScene(self, self.log_manager, self.media_manager,self.account_manager),
+            self.HOME: scene.HomeScene(self, self.logger, self.library,self.account_manager),
             self.PROFILE: scene.OpeningProfileScene(self, self.account_manager),
-            self.VIEW: scene.ViewMediaScene(self, self.media_manager),
-            self.ACCOUNT: scene.AccountScene(self, self.account_manager, self.log_manager)
+            self.VIEW: scene.ViewMediaScene(self, self.library),
+            self.ACCOUNT: scene.AccountScene(self, self.account_manager, self.logger)
         }
-        self.cached_scenes = []
-        self.has_started = False
 
+        self.cached_scenes = []
         self.switch_scene(self.LOGIN)
 
     # basically just a state machine
@@ -57,8 +56,6 @@ class StreamingApp(ctk.CTk):
         self.current_scene = scene_id
 
     def exit_app(self):
-         if not self.has_started:
-             return
          if tk.messagebox.askyesno("Confirm", "Exit GexVideos?"):
             app.account_manager.save_csv()
             self.destroy()
@@ -66,10 +63,9 @@ class StreamingApp(ctk.CTk):
 
 if __name__ == "__main__":
     app = StreamingApp()
-    app.protocol("WM_DELETE_WINDOW", app.exit_app())
-    app.has_started = True
+    app.protocol("WM_DELETE_WINDOW", app.exit_app)
     app.mainloop()
-    # called when app is finished
+    
     
 
 
