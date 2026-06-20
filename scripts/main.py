@@ -26,7 +26,8 @@ class StreamingApp(ctk.CTk):
         self.media_manager = utils.MediaManager(self.account_manager)
 
         self.title("WIP Streaming App Jeremy Guillermo")
-        self.geometry("720x540")
+        self.geometry("1280x720")
+        self.resizable(False, False)
         self.current_scene = self.NONE
 
         self.scenes: dict[int, scene.Scene] = {
