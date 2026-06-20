@@ -88,7 +88,7 @@ class Account():
                 return self._profiles
     
     def set_plan(self, plan):
-        self._data["plan"] = plan
+        self._plan = plan
 
 
 class AccountManager:
