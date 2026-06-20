@@ -1,20 +1,18 @@
-# file to store utilities like managers
 import csv
 import datetime
 from ast import literal_eval
-
 import encryption
-
 import data
 
+# file to store utilities like managers
+
+# class for individual profiles within accounts
 class Profile():
     def __init__(self, data):
-        # private
+
         self._name = data["name"]
         self._age = data["age"]
         self._history = []
-
-        # public
         self.watchlist = []
         for watch in data["watchlist"]:
             self.watchlist.append(int(watch))
@@ -30,7 +28,7 @@ class Profile():
             case "history":
                 return self._history
 
-    def get_data(self):
+    def get_data(self) -> dict:
         return {"name" : self._name,
                 "age" : self._age,
                 "watchlist" : self.watchlist,
@@ -46,13 +44,11 @@ class Account():
         # assigns each value of the row to the correct type
         self._username = data["username"]
         self._email = data["email"]
-        # convert byte formatted as a string to byte
-        self._password = data["password"]
+        self._password = data["password"] # convert byte formatted as a string to byte
         self._plan = data["plan"]
         self._payment = data["payment"]
-        # convert list formatted as a string to list
         profiles = data["profiles"]
-        self._profiles : list[Profile] = []
+        self._profiles : list[Profile] = [] # list of profile objects
         for profile in  profiles:
             self._profiles.append(Profile(profile))
     
@@ -60,7 +56,7 @@ class Account():
         for profile in self._profiles:
             del profile
 
-    def get_data(self):
+    def get_data(self) -> dict:
         profile_data = []
         for profile in self._profiles:
             profile_data.append(profile.get_data())
@@ -104,6 +100,7 @@ class AccountManager:
         self._current_account_index = None
         self._accounts = []
         self._profile = 0
+        # list of dicts that gets saves as a csv
         self._account_data = []
 
     # attempts to login
@@ -114,8 +111,9 @@ class AccountManager:
                 continue
             if encryption.validate_password(account["password"], password):
                 if self._current_account_index:
+                    # updates account data if there was a previous account
                     self._account_data[self._current_account_index] = self.current_account.get_data()
-
+                # creats account instance
                 self.current_account = Account(account)
                 self._current_account_index = i
                 return self.LOGIN_SUCCESS
@@ -123,22 +121,22 @@ class AccountManager:
         return self.LOGIN_USER_ERR
 
     def logout(self):
+        # updates account data
         if self._current_account_index:
             self._account_data[self._current_account_index] = self.current_account.get_data()
         del self.current_account
         self.current_account = None
-        # switch to login screen
 
     def set_profile(self, profile):
         self._profile = profile
-        # switch to welcome screen
-        # update content filters
+
 
     def get_active_profile(self):
         return self.current_account.get("profiles")[self._profile]
 
 
     def save_csv(self):
+        # saves self._account_data to csv
         if self._current_account_index:
             self._account_data[self._current_account_index] = self.current_account.get_data()
         with open(self.CSV_PATH, "w", newline="") as csvfile:
@@ -177,9 +175,7 @@ class LogManager:
 
     def add_viewing_activity(self, media) -> None:
         with open(self.path, "a") as f:
-            f.write(
-                f"{datetime.datetime.now()} : {self.acc_man.current_account.get('username')} watched {media.title}\n"
-            )
+            f.write(f"{datetime.datetime.now()} : {self.acc_man.current_account.get('username')} watched {media.title}\n")
 
     def add_subscription_activity(self, current_plan, new_plan) -> None:
         with open(self.path, "a") as f:
@@ -195,13 +191,14 @@ New Plan : {data.plans[new_plan]["name"]} @ ${data.plans[new_plan]["price"]}/mon
 
 
 class MediaManager:
-    def __init__(self, account_manager : AccountManager) -> None:
-        self.media_list = []
-        self.visible_list = []
+    def __init__(self, account_manager : AccountManager):
+        self.media_list : list[data.Media] = []
+        self.visible_list : list[int] = []
         self.acc_man : AccountManager = account_manager
         self.current_viewed : int
         self.is_watchlist = False
 
+        # makes media and visible list
         for i in range(len(data.media)):
             media_data = data.media[i]
             if media_data["type"] == data.MOVIE:

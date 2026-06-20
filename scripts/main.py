@@ -58,6 +58,7 @@ class StreamingApp(ctk.CTk):
         self.current_scene = scene_id
 
     def exit_app(self):
+         print("exit")
          if not self.has_started:
              return
          if tk.messagebox.askyesno("Confirm", "Exit GexVideos?"):
@@ -70,7 +71,7 @@ if __name__ == "__main__":
     app.protocol("WM_DELETE_WINDOW", app.exit_app())
     app.has_started = True
     app.mainloop()
-    # called when app is finished
+    
     
 
 

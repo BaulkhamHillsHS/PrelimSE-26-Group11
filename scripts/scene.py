@@ -4,7 +4,7 @@ from PIL import Image
 from utils import *
 
 
-
+#placed at the top of every scenes
 class Header(ctk.CTkFrame):
     def __init__(self, scene, app, build_navbar = True):
         super().__init__(master=scene)
@@ -19,7 +19,8 @@ class Header(ctk.CTkFrame):
         self.lbl_logo.grid(row=0, column=0, sticky="w")
 
 
-
+        # buttons to swtich to home and accounts
+        # conditional to prevent errors entering scenes without an account
         if build_navbar:
             self.navbar = ctk.CTkFrame(self, width=200, height=100)
 
@@ -41,6 +42,8 @@ class Header(ctk.CTkFrame):
     def quit_clicked(self):
         # add a confirm
         self.app.exit_app()
+
+
 # based on state design pattern
 class Scene(ctk.CTkFrame):
     def __init__(self, app):
@@ -53,23 +56,19 @@ class Scene(ctk.CTkFrame):
 
     def exit_scene(self):
         pass
-
+    
+    # called separatedly from enter_scene as forget_pack handles cached scenes
     def build_frame(self):
         self._build_header()
         self._build_main()
 
     def _build_header(self):
-        """Build the logo and navigation bar at the top of the screen that is in most scenes in the app."""
-        # add frame and configure grid inside frame
         self._frame_header = Header(self, self.app)
         self._frame_header.pack(fill=ctk.X)
 
     def _build_main(self):
-        """Blank usually, just for child classes to inherit and make different."""
         pass
-        # old comments probably good to preserve for documentation
-        # add: build main frame - frame.build - each subclass has a different build func ig
-        # generic scene -> specific scene which inherits from generic and then polymorphism on build_main()
+
 
 
 class LoginScene(Scene):
@@ -83,7 +82,7 @@ class LoginScene(Scene):
         self._frame_header.pack(fill=ctk.X)
 
     def _build_main(self):
-        """Build a simple username and password form with a title and a button that links to HomeScene."""
+        #Build a simple username and password form with a title and a button that links to HomeScene
         self._frame_main = ctk.CTkFrame(self, width=400, height=400)
         self._frame_main.pack(expand=True)
 
@@ -104,7 +103,7 @@ class LoginScene(Scene):
             self._frame_main,
             width=200,
             height=50,
-            text="Start Surfing",
+            text="Enter the Media Dimension",
             command=self.login_button_clicked,
         )
         self.btn_login.pack(expand=True)
@@ -121,12 +120,15 @@ class LoginScene(Scene):
             self.lbl_error.configure(text = "Invalid username")
         if login_status == self.acc_man.LOGIN_PASS_ERR:
             self.lbl_error.configure(text = "Invalid password")
+
     def enter_scene(self):
+        # deletes previously entered entry
         self.lbl_error.configure(text = "")
         self.ent_username.delete(0,"end")
         self.ent_pw.delete(0,"end")
 
 
+# initial profile selection after login
 class OpeningProfileScene(Scene):
     def __init__(self, master, account_manager):
         self.acc_man = account_manager
@@ -153,6 +155,7 @@ class OpeningProfileScene(Scene):
         self.app.switch_scene(self.app.HOME)
 
 
+# scene holding all the info relevant to account management
 class AccountScene(Scene):
     def __init__(self, master, account_manager, log_manager):
         self.acc_man : AccountManager = account_manager
@@ -200,14 +203,14 @@ class AccountScene(Scene):
                     text=data.plans[i]["name"],
                     command=lambda plan=i: self.plan_clicked(plan),
                 ).pack()
+
+        # logout
         self.btn_logout = ctk.CTkButton(self._frame_main, width=70, text="Log Out", command=self.click_logout).pack()
 
     def media_clicked(self, profile):
         self.acc_man.set_profile(profile)
         self._frame_main.destroy()
-        self._build_main()
-
-        
+        self._build_main()        
 
     def plan_clicked(self, plan):
         if tk.messagebox.askyesno("Confirm", f"Switch to {data.plans[plan]["name"]} Plan?"):
@@ -215,11 +218,13 @@ class AccountScene(Scene):
             self.acc_man.current_account.set_plan(plan)
             self._frame_main.destroy()
             self._build_main()
+
     def click_logout(self):
         if tk.messagebox.askyesno("Confirm", f"Logout of {self.acc_man.current_account.get("username")}?"):
             self.app.switch_scene(self.app.LOGIN)
 
 
+# displays a grid of all thumbnails
 class HomeScene(Scene):
     def __init__(self, master, log_manager, media_manager, account_manager):
         self.log_man = log_manager
@@ -241,6 +246,7 @@ class HomeScene(Scene):
         if self._list_frame:
             self._list_frame.destroy() # to reset the frame
         self._list_frame = ctk.CTkScrollableFrame(self._frame_main, width=1008, height=700)
+
         card_count = 0
         for index in self.med_man.visible_list:
             # In the future adding a way to cache cards or image lables would help
@@ -250,6 +256,7 @@ class HomeScene(Scene):
             # when building the scene
             self._media_card = ctk.CTkFrame(self._list_frame, width=336, height=240)
             self._media_card.grid(row = card_count//3, column = card_count % 3)
+
             # watch button
             ctk.CTkButton(
                 self._media_card,
@@ -268,11 +275,10 @@ class HomeScene(Scene):
             ctk.CTkCheckBox(self._media_card, text="Watchlist", variable=checked_state, 
                 command=lambda media_index=index: self.watchlist_clicked(media_index)).pack()
                 
-
+            # media description
             genres = []
             for genre in self.med_man.media_list[index].genre:
                 genres.append(data.genres[genre])
-
             text = f"""\
 {self.med_man.media_list[index].title}
 {self.med_man.media_list[index].rating} or above only
@@ -300,6 +306,7 @@ class HomeScene(Scene):
         
 
     def media_clicked(self, media_id):
+        # watches media in viewpage
         self.log_man.add_viewing_activity(self.med_man.media_list[media_id])
         self.med_man.current_viewed = media_id
         self.acc_man.get_active_profile().append_history(media_id)
@@ -310,6 +317,7 @@ class HomeScene(Scene):
         self.app.switch_scene(self.app.VIEW)
 
     def watchlist_clicked(self, media_id):
+        # toggles profile watchlist bool for this media
         if media_id not in self.acc_man.get_active_profile().get("watchlist"):
             self.acc_man.get_active_profile().watchlist.append(media_id)
         else:
@@ -319,9 +327,8 @@ class HomeScene(Scene):
                 self.med_man.update_visible()
                 self._build_list()
 
-
-    
     def category_combo(self, value):
+        # updates genre filter
         if value == "Filter by Catagory":
             self.med_man.genre_filter = None
         else:
@@ -330,6 +337,7 @@ class HomeScene(Scene):
         self._build_list()
 
     def watchlist_switched(self):
+        # toggles watchlist state
         self.med_man.is_watchlist = not self.med_man.is_watchlist
         self.med_man.update_visible()
         self._build_list()
@@ -356,20 +364,22 @@ class ViewMediaScene(Scene):
             self._build_show()
 
     def _build_movie(self):
-        # currently builds a pack of labels with different metadata
+        # Image in place of video
         ctk.CTkLabel(
                 self._frame_main,
                 text="",
                 image=self.med_man.media_list[self.med_man.current_viewed].display,
             ).pack()
+        #title
         ctk.CTkLabel(self._frame_main, text=self.med_man.media_list[self.med_man.current_viewed].title).pack()
 
     def _build_show(self):
-        # currently builds a pack of labels with different metadata
+        # Image in place of episode 1
         ctk.CTkLabel(
                 self._frame_main,
                 text="",
                 image=self.med_man.media_list[self.med_man.current_viewed].display_list[0],
             ).pack()
+        #title
         ctk.CTkLabel(self._frame_main, text=self.med_man.media_list[self.med_man.current_viewed].title).pack()
 

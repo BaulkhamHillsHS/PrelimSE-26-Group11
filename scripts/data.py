@@ -1,21 +1,10 @@
 import customtkinter as ctk
 from PIL import Image
+
 # Constants
-# Subscription Types
-BASE_PLAN = 0
-PREMIUM_PLAN = 1
 
-# Scene Ids
-WELCOME = 0
-LOGIN = 1
-HOME = 2
-VIEW = 3
-SUBSCRIBE = 5
+
 # Genres
-GEX = 0
-THE = 1
-GECKO = 2
-
 GEX_1 = 0
 GEX_2 = 1
 GEX_3 = 2
@@ -58,10 +47,13 @@ LOGO = ctk.CTkImage(light_image=Image.open("data/images/logo_light.png"),
 
 rating_names = {G : "G", PG : "PG", M : "M", MA : "MA", R : "R", X : "X"}
 
+# Subscription Types
+BASE_PLAN = 0
+PREMIUM_PLAN = 1
 plans = [{"name" : "Basic Plan", "price": 9.99}, 
         {"name" : "Premium Plan", "price": 19.99}]
 
-# need to replace "path"s with image paths
+
 media = [
     {
         "title": "Crystal Dynamics Intro",
@@ -93,7 +85,7 @@ media = [
         "display_path": ["data/images/3.png", "data/images/temp.png"],
         "thumbnail": "data/images/3.png",
         "rating": G,
-        "genre": [GEX, CUTSCENE, COMPILATION],
+        "genre": [GEX_1, CUTSCENE, COMPILATION],
     },
     {
         "title": "Gex 1 Trailer 1",
@@ -499,7 +491,7 @@ media = [
 
 
 class Media:
-    def __init__(self, id: int) -> None:
+    def __init__(self, id: int):
 
         self.id = id
         self.title = media[id]["title"]
@@ -509,19 +501,11 @@ class Media:
         self.genre = media[id]["genre"]
         self.type = media[id]["type"]
 
-    def build_card(self) -> None:
-        pass
-
-    def card_pressed(self) -> None:
-        pass
-
 
 class Movie(Media):
     def __init__(self, id):
         super().__init__(id)
-        self.display = ctk.CTkImage(
-            light_image=Image.open(self.display_path), size=(640, 360)
-        )
+        self.display = ctk.CTkImage(light_image=Image.open(self.display_path), size=(640, 360))
 
 
 class Show(Media):
@@ -531,6 +515,4 @@ class Show(Media):
         # not in the scope of this project
         self.display_list = []
         for path in self.display_path:
-            self.display_list.append(
-                ctk.CTkImage(light_image=Image.open(path), size=(640, 360))
-            )
+            self.display_list.append(ctk.CTkImage(light_image=Image.open(path), size=(640, 360)))
