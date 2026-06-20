@@ -135,14 +135,21 @@ class OpeningProfileScene(Scene):
     def _build_main(self):
         # currently builds a pack of labels with different metadata
         self._frame_main = ctk.CTkFrame(self, width=400, height=200)
-        self._frame_main.pack()
+        self._frame_main.pack(expand=True, fill=ctk.BOTH)
+        self._frame_main.rowconfigure(index=1,weight=1)
+        
         account = self.acc_man.current_account
+        lbl_title = ctk.CTkLabel(self._frame_main, text="Select a profile", font=("Comic Sans MS", 40))
+        lbl_title.grid(row=0, columnspan=len(account.get("profiles")))
         for i in range(len(account.get("profiles"))):
-            ctk.CTkButton(
-                self._frame_main,
+            btn_profile= ctk.CTkButton(
+                self._frame_main, width=120, height=70,
                 text=account.get("profiles")[i].get("name"),
                 command=lambda profile=i: self.profile_clicked(profile),
-            ).pack()
+            )
+            btn_profile.grid(row=1,column=i, padx=(40,0),pady=100, sticky='e')
+        # slightly different formatting for the last button
+        btn_profile.grid_configure(padx=40,sticky='w')
 
     def _build_header(self):
         self._frame_header = Header(self, self.app, False)
