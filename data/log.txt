@@ -155,3 +155,19 @@ New Plan : Premium Plan @ $19.99/month
 2026-06-20 18:35:37.395630 : a watched Gex 1 compilation
 2026-06-20 19:08:01.184033 : a watched Gex Trilogy: Review
 2026-06-20 19:13:34.531134 : a watched Crystal Dynamics Intro
+==========================================
+Invoice for change in subscription plan
+Account name : a
+Payment Credentials : None
+Date : 2026-06-20
+Old Plan : Basic Plan @ $9.99/month
+New Plan : Premium Plan @ $19.99/month
+==========================================
+==========================================
+Invoice for change in subscription plan
+Account name : a
+Payment Credentials : None
+Date : 2026-06-20
+Old Plan : Basic Plan @ $9.99/month
+New Plan : Premium Plan @ $19.99/month
+==========================================
