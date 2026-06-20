@@ -206,40 +206,49 @@ class AccountScene(Scene):
         self._frame_main.pack()
         account = self.acc_man.current_account
 
-        self.lbl_account = ctk.CTkLabel(self._frame_main, text=account.get("username")).pack()
+        self.lbl_title = ctk.CTkLabel(self._frame_main, text="Your Account")
+        self.lbl_title.grid(row=0,column=0)
+        self.lbl_account = ctk.CTkLabel(self._frame_main, text=account.get("username"))
+        self.lbl_account.grid(row=1,column=0)
+        
+        self.lbl_current_plan = ctk.CTkLabel(self._frame_main, text="Current Plan:")
+        self.lbl_current_plan.grid(row=2,column=0)
+        self.lbl_switch_plan = ctk.CTkLabel(self._frame_main, text="switch plan to:")
+        self.lbl_switch_plan.grid(row=3, column=0)
         #profile
-        self.lbl_profiles = ctk.CTkLabel(self._frame_main, text="profiles").pack()
+        self.lbl_profiles = ctk.CTkLabel(self._frame_main, text="Profiles")
+        self.lbl_profiles.grid(row=5,column=0)
         #profile buttons
         for i in range(len(account.get("profiles"))):
+            btn_profile = ctk.CTkButton(self._frame_main)
+            btn_profile.grid(row=6, column=i)
             if account.get("profiles")[i] == self.acc_man.get_active_profile():
-                ctk.CTkButton(
-                self._frame_main,
-                text=account.get("profiles")[i].get("name"),
-                state="disabled"
-                ).pack()
+                btn_profile.configure(
+                    text=account.get("profiles")[i].get("name"),
+                    state="disabled"
+                )
             else:
-                ctk.CTkButton(
-                    self._frame_main,
+                btn_profile.configure(
                     text=account.get("profiles")[i].get("name"),
                     command=lambda media=i: self.media_clicked(media),
-                ).pack()
+                )
         #plans
-        self.lbl_plan = ctk.CTkLabel(self._frame_main, text="plans").pack()
         for i in range(len(data.plans)):
+            btn_plan = ctk.CTkButton(self._frame_main)
+            btn_plan.grid(row=4, column=i)
             if account.get("plan") == i:
-                ctk.CTkButton(
-                self._frame_main,
-                text=data.plans[i]["name"],
-                command=lambda plan=i: self.plan_clicked(plan),
-                state="disabled"
-                ).pack()
-            else:
-                ctk.CTkButton(
-                    self._frame_main,
+                btn_plan.configure(
                     text=data.plans[i]["name"],
                     command=lambda plan=i: self.plan_clicked(plan),
-                ).pack()
-        self.btn_logout = ctk.CTkButton(self._frame_main, width=70, text="Log Out", command=self.click_logout).pack()
+                    state="disabled"
+                )
+            else:
+                btn_plan.configure(
+                    text=data.plans[i]["name"],
+                    command=lambda plan=i: self.plan_clicked(plan),
+                )
+        self.btn_logout = ctk.CTkButton(self._frame_main, width=70, text="Log Out", command=self.click_logout)
+        self.btn_logout.grid(row=1,column=3)
 
     def media_clicked(self, profile):
         self.acc_man.set_profile(profile)
@@ -323,7 +332,7 @@ class HomeScene(Scene):
         self._watchlist_switch = ctk.CTkSwitch(self._filter_frame, text="Watchlist",
             command=self.watchlist_switched).grid(row=0, column=0)
 
-        self._genre_filter = ctk.CTkComboBox(self._filter_frame, values=["Filter by Catagory"] + data.genre_list,
+        self._genre_filter = ctk.CTkComboBox(self._filter_frame, values=["Filter by Category"] + data.genre_list,
             command=self.category_combo).grid(row=0, column=1)
         self._build_list()
         

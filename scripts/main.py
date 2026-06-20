@@ -25,7 +25,7 @@ class StreamingApp(ctk.CTk):
         self.log_manager = utils.LogManager(self.account_manager)
         self.media_manager = utils.MediaManager(self.account_manager)
 
-        self.title("WIP Streaming App Jeremy Guillermo")
+        self.title("GEX VIDEOS Streaming App Jeremy Guillermo")
         self.geometry("720x540")
         self.current_scene = self.NONE
 

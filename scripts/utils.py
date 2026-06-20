@@ -44,6 +44,7 @@ class Profile():
 
 class Account():
     def __init__(self, data):
+        self._data = data
         # assigns each value of the row to the correct type
         self._username = data["username"]
         self._email = data["email"]
