@@ -26,7 +26,7 @@ class StreamingApp(ctk.CTk):
         self.media_manager = utils.MediaManager(self.account_manager)
 
         self.title("GEX VIDEOS Streaming App Jeremy Guillermo")
-        self.geometry("720x540")
+        self.geometry("1024x576")
         self.current_scene = self.NONE
 
         self.scenes: dict[int, scene.Scene] = {

@@ -163,40 +163,33 @@ class AccountScene(Scene):
 
     def _build_main(self):
         # currently builds a pack of labels with different metadata
-        self._frame_main = ctk.CTkFrame(self, width=400, height=200)
-        self._frame_main.pack()
+        self._frame_main = ctk.CTkFrame(self, width=800, height=200)
+        self._frame_main.pack(fill=ctk.Y)
         account = self.acc_man.current_account
 
-        self.lbl_title = ctk.CTkLabel(self._frame_main, text="Your Account")
-        self.lbl_title.grid(row=0,column=0)
-        self.lbl_account = ctk.CTkLabel(self._frame_main, text=account.get("username"))
-        self.lbl_account.grid(row=1,column=0)
+        self.lbl_title = ctk.CTkLabel(self._frame_main, text="Your Account", font=("Comic Sans MS", 40))
+        self.lbl_title.grid(row=0,column=0, padx=20,pady=10, columnspan=2)
         
-        self.lbl_current_plan = ctk.CTkLabel(self._frame_main, text="Current Plan:")
-        self.lbl_current_plan.grid(row=2,column=0)
+        self.lbl_name = ctk.CTkLabel(self._frame_main, text="Username:")
+        self.lbl_name.grid(row=1,column=0, padx=20,pady=20)
+        self.lbl_namedata = ctk.CTkLabel(self._frame_main, text=account.get("username"), font=("Arial Bold", 20))
+        self.lbl_namedata.grid(row=1,column=1, padx=20,pady=20)
+        self.btn_logout = ctk.CTkButton(self._frame_main, width=140, height=50,
+                                        text="Log Out", command=self.click_logout)
+        self.btn_logout.grid(row=1,column=2, padx=20,pady=20, sticky='n')
+        
+        self.lbl_plan = ctk.CTkLabel(self._frame_main, text="Current Plan:")
+        self.lbl_plan.grid(row=2,column=0, pady=10)
+        plan_name = data.plans[account.get("plan")]["name"]
+        self.lbl_plandata = ctk.CTkLabel(self._frame_main, text=plan_name, font=("Arial Bold", 20))
+        self.lbl_plandata.grid(row=2,column=1,padx=20,pady=10)
+        
         self.lbl_switch_plan = ctk.CTkLabel(self._frame_main, text="switch plan to:")
-        self.lbl_switch_plan.grid(row=3, column=0)
-        #profile
-        self.lbl_profiles = ctk.CTkLabel(self._frame_main, text="Profiles")
-        self.lbl_profiles.grid(row=5,column=0)
-        #profile buttons
-        for i in range(len(account.get("profiles"))):
-            btn_profile = ctk.CTkButton(self._frame_main)
-            btn_profile.grid(row=6, column=i)
-            if account.get("profiles")[i] == self.acc_man.get_active_profile():
-                btn_profile.configure(
-                    text=account.get("profiles")[i].get("name"),
-                    state="disabled"
-                )
-            else:
-                btn_profile.configure(
-                    text=account.get("profiles")[i].get("name"),
-                    command=lambda media=i: self.media_clicked(media),
-                )
-        #plans
+        self.lbl_switch_plan.grid(row=3,column=0, pady=(10,5))
+        # plan buttons
         for i in range(len(data.plans)):
             btn_plan = ctk.CTkButton(self._frame_main)
-            btn_plan.grid(row=4, column=i)
+            btn_plan.grid(row=4, column=i, padx=10,pady=(0,20))
             if account.get("plan") == i:
                 btn_plan.configure(
                     text=data.plans[i]["name"],
@@ -208,8 +201,24 @@ class AccountScene(Scene):
                     text=data.plans[i]["name"],
                     command=lambda plan=i: self.plan_clicked(plan),
                 )
-        self.btn_logout = ctk.CTkButton(self._frame_main, width=70, text="Log Out", command=self.click_logout)
-        self.btn_logout.grid(row=1,column=3)
+        #profile
+        self.lbl_profiles = ctk.CTkLabel(self._frame_main, text="Profiles")
+        self.lbl_profiles.grid(row=5,column=0, pady=(10,5))
+        #profile buttons
+        for i in range(len(account.get("profiles"))):
+            btn_profile = ctk.CTkButton(self._frame_main)
+            btn_profile.grid(row=6, column=i, padx=10,pady=(0,20))
+            if account.get("profiles")[i] == self.acc_man.get_active_profile():
+                btn_profile.configure(
+                    text=account.get("profiles")[i].get("name"),
+                    state="disabled"
+                )
+            else:
+                btn_profile.configure(
+                    text=account.get("profiles")[i].get("name"),
+                    command=lambda media=i: self.media_clicked(media),
+                )
+        
 
     def media_clicked(self, profile):
         self.acc_man.set_profile(profile)
@@ -302,9 +311,13 @@ class HomeScene(Scene):
 
         self._watchlist_switch = ctk.CTkSwitch(self._filter_frame, text="Watchlist",
             command=self.watchlist_switched).grid(row=0, column=0)
-
-        self._genre_filter = ctk.CTkComboBox(self._filter_frame, values=["Filter by Category"] + data.genre_list,
-            command=self.category_combo).grid(row=0, column=1)
+        
+        filter_var = tk.StringVar(value="Filter by Category")
+        self._genre_filter = ctk.CTkComboBox(self._filter_frame,
+                                             variable=filter_var,
+                                             values=["All Categories"]+data.genre_list,
+                                             command=self.category_combo
+                                             ).grid(row=0, column=1)
         self._build_list()
         
 
@@ -331,7 +344,8 @@ class HomeScene(Scene):
 
     
     def category_combo(self, value):
-        if value == "Filter by Catagory":
+        print(value)
+        if value == "All Categories":
             self.med_man.genre_filter = None
         else:
             self.med_man.genre_filter = data.genre_list.index(value)
