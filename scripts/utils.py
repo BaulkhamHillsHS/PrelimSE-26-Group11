@@ -168,7 +168,7 @@ class AccountManager:
             writer.writerow(new_account)
 
 
-class LogManager:
+class Logger:
     def __init__(self, account_manager: AccountManager) -> None:
         self.path = "data/log.txt"
         self.acc_man: AccountManager = account_manager
@@ -190,7 +190,7 @@ New Plan : {data.plans[new_plan]["name"]} @ ${data.plans[new_plan]["price"]}/mon
 """)
 
 
-class MediaManager:
+class Library:
     def __init__(self, account_manager : AccountManager):
         self.media_list : list[data.Media] = []
         self.visible_list : list[int] = []

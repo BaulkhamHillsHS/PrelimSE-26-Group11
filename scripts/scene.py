@@ -154,9 +154,9 @@ class OpeningProfileScene(Scene):
 
 # scene holding all the info relevant to account management
 class AccountScene(Scene):
-    def __init__(self, master, account_manager, log_manager):
+    def __init__(self, master, account_manager, loggerager):
         self.acc_man : AccountManager = account_manager
-        self.log_man : LogManager = log_manager
+        self.logger : Logger = loggerager
         self.profile_buttons = []
         self.plan_buttons = []
         super().__init__(master)
@@ -211,7 +211,7 @@ class AccountScene(Scene):
 
     def plan_clicked(self, plan):
         if tk.messagebox.askyesno("Confirm", f"Switch to {data.plans[plan]["name"]} Plan?"):
-            self.log_man.add_subscription_activity(self.acc_man.current_account.get("plan"), plan)
+            self.logger.add_subscription_activity(self.acc_man.current_account.get("plan"), plan)
             self.acc_man.current_account.set_plan(plan)
             self._frame_main.destroy()
             self._build_main()
@@ -223,9 +223,9 @@ class AccountScene(Scene):
 
 # displays a grid of all thumbnails
 class HomeScene(Scene):
-    def __init__(self, master, log_manager, media_manager, account_manager):
-        self.log_man = log_manager
-        self.med_man : MediaManager = media_manager
+    def __init__(self, master, logger, media_manager, account_manager):
+        self.logger : Logger = logger
+        self.library : Library = media_manager
         self.acc_man : AccountManager = account_manager
         super().__init__(master)
         self._list_frame = None
@@ -233,8 +233,8 @@ class HomeScene(Scene):
 
     def enter_scene(self):
         if self.acc_man.current_account != {}:
-            self.med_man.ratings_filter = self.acc_man.get_active_profile().get("age")
-            self.med_man.update_visible()
+            self.library.ratings_filter = self.acc_man.get_active_profile().get("age")
+            self.library.update_visible()
             self._build_list()
         else:
             raise ValueError("Entered homescene without an account")
@@ -245,7 +245,7 @@ class HomeScene(Scene):
         self._list_frame = ctk.CTkScrollableFrame(self._frame_main, width=1008, height=700)
 
         card_count = 0
-        for index in self.med_man.visible_list:
+        for index in self.library.visible_list:
             # In the future adding a way to cache cards or image lables would help
             # optimise loading speed
 
@@ -258,7 +258,7 @@ class HomeScene(Scene):
             ctk.CTkButton(
                 self._media_card,
                 text="",
-                image=self.med_man.media_list[index].thumbnail, 
+                image=self.library.media_list[index].thumbnail, 
                 fg_color="transparent",
                 bg_color="transparent",
                 # lambda so the the command can pass a parameter
@@ -274,11 +274,11 @@ class HomeScene(Scene):
                 
             # media description
             genres = []
-            for genre in self.med_man.media_list[index].genre:
+            for genre in self.library.media_list[index].genre:
                 genres.append(data.genres[genre])
             text = f"""\
-{self.med_man.media_list[index].title}
-{self.med_man.media_list[index].rating} or above only
+{self.library.media_list[index].title}
+{self.library.media_list[index].rating} or above only
 {', '.join(genres)}"""
             
             ctk.CTkLabel(self._media_card,text=text,).pack()
@@ -304,8 +304,8 @@ class HomeScene(Scene):
 
     def media_clicked(self, media_id):
         # watches media in viewpage
-        self.log_man.add_viewing_activity(self.med_man.media_list[media_id])
-        self.med_man.current_viewed = media_id
+        self.logger.add_viewing_activity(self.library.media_list[media_id])
+        self.library.current_viewed = media_id
         self.acc_man.get_active_profile().append_history(media_id)
         # removed from watchlist if in watchlist
         if media_id in self.acc_man.get_active_profile().get("watchlist"):
@@ -320,30 +320,30 @@ class HomeScene(Scene):
         else:
             index = self.acc_man.get_active_profile().get("watchlist").index(media_id)
             self.acc_man.get_active_profile().watchlist.pop(index)
-            if self.med_man.is_watchlist:
-                self.med_man.update_visible()
+            if self.library.is_watchlist:
+                self.library.update_visible()
                 self._build_list()
 
     def category_combo(self, value):
         # updates genre filter
         if value == "Filter by Catagory":
-            self.med_man.genre_filter = None
+            self.library.genre_filter = None
         else:
-            self.med_man.genre_filter = data.genre_list.index(value)
-        self.med_man.update_visible()
+            self.library.genre_filter = data.genre_list.index(value)
+        self.library.update_visible()
         self._build_list()
 
     def watchlist_switched(self):
         # toggles watchlist state
-        self.med_man.is_watchlist = not self.med_man.is_watchlist
-        self.med_man.update_visible()
+        self.library.is_watchlist = not self.library.is_watchlist
+        self.library.update_visible()
         self._build_list()
 
 
 
 class ViewMediaScene(Scene):
     def __init__(self, master, media_manager):
-        self.med_man : MediaManager = media_manager
+        self.library : Library = media_manager
         self._frame_main = None
         super().__init__(master)
 
@@ -355,7 +355,7 @@ class ViewMediaScene(Scene):
             self._frame_main.destroy() # to reset the frame
         self._frame_main = ctk.CTkFrame(self, width=400, height=200)
         self._frame_main.pack()
-        if self.med_man.media_list[self.med_man.current_viewed].type == data.MOVIE:
+        if self.library.media_list[self.library.current_viewed].type == data.MOVIE:
             self._build_movie()
         else:
             self._build_show()
@@ -365,18 +365,18 @@ class ViewMediaScene(Scene):
         ctk.CTkLabel(
                 self._frame_main,
                 text="",
-                image=self.med_man.media_list[self.med_man.current_viewed].display,
+                image=self.library.media_list[self.library.current_viewed].display,
             ).pack()
         #title
-        ctk.CTkLabel(self._frame_main, text=self.med_man.media_list[self.med_man.current_viewed].title).pack()
+        ctk.CTkLabel(self._frame_main, text=self.library.media_list[self.library.current_viewed].title).pack()
 
     def _build_show(self):
         # Image in place of episode 1
         ctk.CTkLabel(
                 self._frame_main,
                 text="",
-                image=self.med_man.media_list[self.med_man.current_viewed].display_list[0],
+                image=self.library.media_list[self.library.current_viewed].display_list[0],
             ).pack()
         #title
-        ctk.CTkLabel(self._frame_main, text=self.med_man.media_list[self.med_man.current_viewed].title).pack()
+        ctk.CTkLabel(self._frame_main, text=self.library.media_list[self.library.current_viewed].title).pack()
 
