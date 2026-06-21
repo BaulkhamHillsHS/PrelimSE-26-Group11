@@ -234,6 +234,8 @@ class HomeScene(Scene):
         self.library : Library = media_manager
         self.acc_man : AccountManager = account_manager
         super().__init__(master)
+        self._frame_main = ctk.CTkFrame(self, width=1280, height=720)
+        self._scroll_frame = ctk.CTkScrollableFrame(self._frame_main, width=1280, height=720)
         self._list_frame = None
         
 
@@ -248,9 +250,10 @@ class HomeScene(Scene):
     def _build_list(self):
         if self._list_frame:
             self._list_frame.destroy() # to reset the frame
-        self._list_frame = ctk.CTkScrollableFrame(self._frame_main, width=1008, height=700)
+        self._list_frame = ctk.CTkFrame(self._scroll_frame, width=1008, height=500)
 
         card_count = 0
+        ctk.CTkLabel(self._list_frame, text="test")
         for index in self.library.visible_list:
             # In the future adding a way to cache cards or image lables would help
             # optimise loading speed
@@ -294,7 +297,7 @@ class HomeScene(Scene):
 
     def _build_main(self):
         # currently builds a pack of labels with different metadata
-        self._frame_main = ctk.CTkFrame(self, width=400, height=720)
+        
         self._frame_main.pack()
 
         self._filter_frame = ctk.CTkFrame(self._frame_main, width=400, height=200)
@@ -305,6 +308,8 @@ class HomeScene(Scene):
 
         self._genre_filter = ctk.CTkComboBox(self._filter_frame, values=["Filter by Catagory"] + data.genre_list,
             command=self.category_combo).grid(row=0, column=1)
+        
+        self._scroll_frame.pack()
         
 
     def media_clicked(self, media_id):
