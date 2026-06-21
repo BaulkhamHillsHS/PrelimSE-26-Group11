@@ -184,3 +184,21 @@ New Plan : Premium Plan @ $19.99/month
 2026-06-21 18:25:17.023111 : a watched Crystal Dynamics Intro
 2026-06-21 18:25:21.644689 : a watched Gex: Enter the Gecko Trailer 3
 2026-06-21 18:25:27.534411 : a watched Gex 3: Trailer 3
+2026-06-21 21:12:44.446270 : a watched Gex 1 Intro Cutscene
+2026-06-21 21:12:47.674290 : a watched Gex 1 Ending Cutscene
+==========================================
+Invoice for change in subscription plan
+Account name : a
+Payment Credentials : None
+Date : 2026-06-21
+Old Plan : Premium Plan @ $19.99/month
+New Plan : Basic Plan @ $9.99/month
+==========================================
+==========================================
+Invoice for change in subscription plan
+Account name : a
+Payment Credentials : None
+Date : 2026-06-21
+Old Plan : Basic Plan @ $9.99/month
+New Plan : Premium Plan @ $19.99/month
+==========================================
