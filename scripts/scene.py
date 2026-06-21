@@ -138,12 +138,14 @@ class OpeningProfileScene(Scene):
         self._frame_main.rowconfigure(index=1,weight=1)
         
         account = self.acc_man.current_account
+        profiles = account.get("profiles")
         lbl_title = ctk.CTkLabel(self._frame_main, text="Select a profile", font=("Comic Sans MS", 40))
-        lbl_title.grid(row=0, columnspan=len(account.get("profiles")))
-        for i in range(len(account.get("profiles"))):
+        lbl_title.grid(row=0, columnspan=len(profiles))
+        for i in range(len(profiles)):
+            text=f"{profiles[i].get("name")}\n{str(profiles[i].get("age"))} years old"
             btn_profile= ctk.CTkButton(
                 self._frame_main, width=120, height=70,
-                text=account.get("profiles")[i].get("name"),
+                text=text,
                 command=lambda profile=i: self.profile_clicked(profile),
             )
             btn_profile.grid(row=1,column=i, padx=(40,0),pady=100, sticky='e')
@@ -213,18 +215,14 @@ class AccountScene(Scene):
         self.lbl_profiles.grid(row=5,column=0, pady=(10,5))
         #profile buttons
         for i in range(len(account.get("profiles"))):
-            btn_profile = ctk.CTkButton(self._frame_main)
+            text = account.get("profiles")[i].get("name")
+            text = text + f"\n{account.get("profiles")[i].get("age")} years old"
+            btn_profile = ctk.CTkButton(self._frame_main, text=text)
             btn_profile.grid(row=6, column=i, padx=10,pady=(0,20))
             if account.get("profiles")[i] == self.acc_man.get_active_profile():
-                btn_profile.configure(
-                    text=account.get("profiles")[i].get("name"),
-                    state="disabled"
-                )
+                btn_profile.configure(state="disabled")
             else:
-                btn_profile.configure(
-                    text=account.get("profiles")[i].get("name"),
-                    command=lambda media=i: self.media_clicked(media),
-                )
+                btn_profile.configure(command=lambda media=i: self.media_clicked(media))
         
 
     def media_clicked(self, profile):
