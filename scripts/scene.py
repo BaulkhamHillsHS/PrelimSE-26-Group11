@@ -306,15 +306,19 @@ class HomeScene(Scene):
                 bg_color="transparent",
                 # lambda so the the command can pass a parameter
                 command=lambda media_index=index: self.media_clicked(media_index),
-            ).pack()
+            ).grid(row=0, columnspan = 2)
 
-            # checkbox to add/remove from watchlist
-            value = bool(index in self.acc_man.get_active_profile().get("watchlist"))
-            checkbox = ctk.CTkCheckBox(
-                self._media_card, text="Watchlist", 
-                variable=ctk.IntVar(value=value),
-                command=lambda media_index=index: self.edit_watchlist(media_index))
-            checkbox.pack()
+            # title
+            ctk.CTkLabel(media_card,text=self.library.media_list[index].title
+                ).grid(row=1, column = 0, sticky="w", padx = 10)
+
+            # add/remove watchlist
+            checked_state = ctk.IntVar(value=0)
+            if index in self.acc_man.get_active_profile().get("watchlist"):
+                checked_state = ctk.IntVar(value=1)
+            ctk.CTkCheckBox(media_card, text="Watchlist", variable=checked_state, 
+                command=lambda media_index=index: self.watchlist_clicked(media_index)
+                ).grid(row=1, column = 1, sticky = "e")
                 
             # media description label
             media = self.library.media_list[index]
@@ -324,11 +328,11 @@ class HomeScene(Scene):
                 genres.append(data.genres[genre])
             # format info as text
             text = f"""\
-{media.title}
-{media.rating} or above only
-{', '.join(genres)}"""
+Rated {data.rating_names[self.library.media_list[index].rating]}
+Tags : {', '.join(genres)}
+"""
             
-            ctk.CTkLabel(media_card,text=text,).pack()
+            ctk.CTkLabel(media_card,text=text,).grid(row=2, column = 0, columnspan = 2)
             card_count += 1
             print(self._media_card)
             
@@ -343,7 +347,10 @@ class HomeScene(Scene):
         self._filter_frame.pack()
 
         self._watchlist_switch = ctk.CTkSwitch(self._filter_frame, text="Watchlist",
-            command=self.toggle_watchlist).grid(row=0, column=0)
+            command=self.watchlist_switched).grid(row=0, column=0)
+
+        self._genre_filter = ctk.CTkComboBox(self._filter_frame, values=["Filter by Tags"] + data.genre_list,
+            command=self.category_combo).grid(row=0, column=1)
         
         self._genre_filter = ctk.CTkComboBox(self._filter_frame,
                                              values=["Filter by Category"]+data.genre_list,
