@@ -41,15 +41,13 @@ class Profile():
 
 class Account():
     def __init__(self, data):
-        self._data = data
-        # assigns each value of the row to the correct type
         self._username = data["username"]
         self._email = data["email"]
-        self._password = data["password"] # convert byte formatted as a string to byte
+        self._password = data["password"]
         self._plan = data["plan"]
         self._payment = data["payment"]
         profiles = data["profiles"]
-        self._profiles : list[Profile] = [] # list of profile objects
+        self._profiles : list[Profile] = [] 
         for profile in  profiles:
             self._profiles.append(Profile(profile))
     
@@ -178,7 +176,7 @@ class Logger:
 
     def add_viewing_activity(self, media) -> None:
         with open(self.path, "a") as f:
-            f.write(f"{datetime.datetime.now()} : {self.acc_man.current_account.get('username')} watched {media.title}\n")
+            f.write(f"{datetime.datetime.now()} : {self.acc_man.current_account.get('username')} watched {media.get("title")}\n")
 
     def add_subscription_activity(self, current_plan, new_plan) -> None:
         with open(self.path, "a") as f:
@@ -222,12 +220,12 @@ class Library:
                 if i not in self.acc_man.get_active_profile().get("watchlist"):
                     continue
             media : data.Media = self.media_list[i]
-            if media.rating > self.ratings_filter:
+            if media.get("rating") > self.ratings_filter:
                 continue
-            if media.type not in self.type_filter:
+            if media.get("type") not in self.type_filter:
                 continue
             if self.genre_filter != None:
-                for genre in media.genre:
+                for genre in media.get("genre"):
                     if genre == self.genre_filter:
                         break
                 else:
