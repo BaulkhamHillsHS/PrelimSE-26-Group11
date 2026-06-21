@@ -320,7 +320,7 @@ Tags : {', '.join(genres)}
         self._watchlist_switch = ctk.CTkSwitch(self._filter_frame, text="Watchlist",
             command=self.watchlist_switched).grid(row=0, column=0)
 
-        self._genre_filter = ctk.CTkComboBox(self._filter_frame, values=["Filter by Catagory"] + data.genre_list,
+        self._genre_filter = ctk.CTkComboBox(self._filter_frame, values=["Filter by Tags"] + data.genre_list,
             command=self.category_combo).grid(row=0, column=1)
         
         self._scroll_frame.pack()
