@@ -187,3 +187,6 @@ New Plan : Premium Plan @ $19.99/month
 2026-06-21 11:10:21.247297 : a watched Gex: Enter the Gecko Chinese Secret
 2026-06-21 13:43:29.101574 : a watched Gex 1 Trailer 2
 2026-06-21 15:44:49.892291 : a watched Gex 3: Agent Xtra 1
+2026-06-21 18:25:17.023111 : a watched Crystal Dynamics Intro
+2026-06-21 18:25:21.644689 : a watched Gex: Enter the Gecko Trailer 3
+2026-06-21 18:25:27.534411 : a watched Gex 3: Trailer 3

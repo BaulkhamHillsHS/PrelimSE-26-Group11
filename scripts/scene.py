@@ -281,25 +281,30 @@ class HomeScene(Scene):
                 bg_color="transparent",
                 # lambda so the the command can pass a parameter
                 command=lambda media_index=index: self.media_clicked(media_index),
-            ).pack()
+            ).grid(row=0, columnspan = 2)
+
+            # title
+            ctk.CTkLabel(media_card,text=self.library.media_list[index].title
+                ).grid(row=1, column = 0, sticky="w", padx = 10)
 
             # add/remove watchlist
             checked_state = ctk.IntVar(value=0)
             if index in self.acc_man.get_active_profile().get("watchlist"):
                 checked_state = ctk.IntVar(value=1)
             ctk.CTkCheckBox(media_card, text="Watchlist", variable=checked_state, 
-                command=lambda media_index=index: self.watchlist_clicked(media_index)).pack()
+                command=lambda media_index=index: self.watchlist_clicked(media_index)
+                ).grid(row=1, column = 1, sticky = "e")
                 
             # media description
             genres = []
             for genre in self.library.media_list[index].genre:
                 genres.append(data.genres[genre])
             text = f"""\
-{self.library.media_list[index].title}
-{self.library.media_list[index].rating} or above only
-{', '.join(genres)}"""
+Rated {data.rating_names[self.library.media_list[index].rating]}
+Tags : {', '.join(genres)}
+"""
             
-            ctk.CTkLabel(media_card,text=text,).pack()
+            ctk.CTkLabel(media_card,text=text,).grid(row=2, column = 0, columnspan = 2)
             card_count += 1
         self._list_frame.pack()
 
