@@ -131,9 +131,11 @@ class AccountManager:
         self._profile = profile
 
 
-    def get_active_profile(self):
+    def get_active_profile(self) -> Profile:
         return self.current_account.get("profiles")[self._profile]
 
+    def get_current_index(self) -> int:
+        return self._current_account_index
 
     def save_csv(self):
         # saves self._account_data to csv
