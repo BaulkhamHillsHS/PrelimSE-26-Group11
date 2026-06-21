@@ -11,7 +11,7 @@ class Header(ctk.CTkFrame):
         self.app = app
         self.configure(width=400, height=200)
         self.rowconfigure(0, weight=1)
-        self.columnconfigure((0,1,2,3), weight=1)
+        self.columnconfigure((0,1,2), weight=1)
         
         # load image and display logo label containing image
         # text=' ' (single space) to not display default 'CTkLabel' text on label
@@ -244,7 +244,7 @@ class AccountScene(Scene):
         self._build_main()        
 
     def plan_clicked(self, plan):
-        if tk.messagebox.askyesno("Confirm", f"Switch to {data.plans[plan]["name"]} Plan?"):
+        if tk.messagebox.askyesno("Confirm", f"Switch to {data.plans[plan]["name"]}?"):
             self.logger.add_subscription_activity(self.acc_man.current_account.get("plan"), plan)
             self.acc_man.current_account.set_plan(plan)
             self._frame_main.destroy()
