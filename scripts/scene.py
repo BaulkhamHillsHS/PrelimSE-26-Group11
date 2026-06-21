@@ -266,7 +266,6 @@ class HomeScene(Scene):
         super().__init__(master)
         self._frame_main = ctk.CTkFrame(self, width=1280, height=720)
         self._scroll_frame = ctk.CTkScrollableFrame(self._frame_main, width=1280, height=720)
-        self._scroll_frame.pack()
         self._list_frame = None
         
 
@@ -280,7 +279,8 @@ class HomeScene(Scene):
         
     def _build_list(self):
         print(self.library.visible_list)
-        #
+        
+        self._scroll_frame.pack()
         if bool(self._list_frame):
             self._list_frame.pack_forget()
             self._list_frame.destroy() # to reset the frame
