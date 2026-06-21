@@ -266,6 +266,7 @@ class HomeScene(Scene):
         super().__init__(master)
         self._frame_main = ctk.CTkFrame(self, width=1280, height=720)
         self._scroll_frame = ctk.CTkScrollableFrame(self._frame_main, width=1280, height=720)
+        self._scroll_frame.pack()
         self._list_frame = None
         
 
@@ -317,7 +318,7 @@ class HomeScene(Scene):
             if index in self.acc_man.get_active_profile().get("watchlist"):
                 checked_state = ctk.IntVar(value=1)
             ctk.CTkCheckBox(media_card, text="Watchlist", variable=checked_state, 
-                command=lambda media_index=index: self.watchlist_clicked(media_index)
+                command=lambda media_index=index: self.edit_watchlist(media_index)
                 ).grid(row=1, column = 1, sticky = "e")
                 
             # media description label
@@ -334,7 +335,7 @@ Tags : {', '.join(genres)}
             
             ctk.CTkLabel(media_card,text=text,).grid(row=2, column = 0, columnspan = 2)
             card_count += 1
-            print(self._media_card)
+            print(media_card)
             
 
 
@@ -347,15 +348,10 @@ Tags : {', '.join(genres)}
         self._filter_frame.pack()
 
         self._watchlist_switch = ctk.CTkSwitch(self._filter_frame, text="Watchlist",
-            command=self.watchlist_switched).grid(row=0, column=0)
+            command=self.toggle_watchlist).grid(row=0, column=0)
 
         self._genre_filter = ctk.CTkComboBox(self._filter_frame, values=["Filter by Tags"] + data.genre_list,
             command=self.category_combo).grid(row=0, column=1)
-        
-        self._genre_filter = ctk.CTkComboBox(self._filter_frame,
-                                             values=["Filter by Category"]+data.genre_list,
-                                             command=self.category_combo
-                                             ).grid(row=0, column=1)
         #self._build_list()  ### removing this temporarily fixes the media card bug (for one render)
         
 
@@ -385,7 +381,7 @@ Tags : {', '.join(genres)}
 
     def category_combo(self, value):
         # updates genre filter
-        if value == "Filter by Category":
+        if value == "Filter by Tags":
             self.library.genre_filter = None
         else:
             self.library.genre_filter = data.genre_list.index(value)
