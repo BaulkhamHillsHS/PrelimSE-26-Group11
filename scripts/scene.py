@@ -373,6 +373,8 @@ Tags : {', '.join(genres)}
             if self.library.is_watchlist:
                 self.library.update_visible()
                 self._build_list()
+        
+        
 
     def _category_combo(self, genre):
         # updates genre filter
@@ -388,6 +390,8 @@ Tags : {', '.join(genres)}
         self.library.is_watchlist = not self.library.is_watchlist
         self.library.update_visible()
         self._build_list()
+
+        self._scroll_frame._parent_canvas.yview_moveto(0.0)
 
 
 
