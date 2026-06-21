@@ -141,14 +141,23 @@ class OpeningProfileScene(Scene):
     def _build_main(self):
         # currently builds a pack of labels with different metadata
         self._frame_main = ctk.CTkFrame(self, width=400, height=200)
-        self._frame_main.pack()
+        self._frame_main.pack(expand=True, fill=ctk.BOTH)
+        self._frame_main.rowconfigure(index=1,weight=1)
+        
         account = self.acc_man.current_account
-        for i in range(len(account.get("profiles"))):
-            ctk.CTkButton(
-                self._frame_main,
-                text=account.get("profiles")[i].get("name"),
+        profiles = account.get("profiles")
+        lbl_title = ctk.CTkLabel(self._frame_main, text="Select a profile", font=("Comic Sans MS", 40))
+        lbl_title.grid(row=0, columnspan=len(profiles))
+        for i in range(len(profiles)):
+            text=f"{profiles[i].get("name")}\n{str(profiles[i].get("age"))} years old"
+            btn_profile= ctk.CTkButton(
+                self._frame_main, width=120, height=70,
+                text=text,
                 command=lambda profile=i: self.profile_clicked(profile),
-            ).pack()
+            )
+            btn_profile.grid(row=1,column=i, padx=(40,0),pady=100, sticky='e')
+        # slightly different formatting for the last button
+        btn_profile.grid_configure(padx=40,sticky='w')
 
     def _build_header(self):
         self._frame_header = Header(self, self.app, False)
@@ -178,46 +187,58 @@ class AccountScene(Scene):
 
     def _build_main(self):
         # currently builds a pack of labels with different metadata
-        self._frame_main = ctk.CTkFrame(self, width=400, height=200)
-        self._frame_main.pack()
+        self._frame_main = ctk.CTkFrame(self, width=800, height=200)
+        self._frame_main.pack(fill=ctk.Y)
         account = self.acc_man.current_account
 
-        self.lbl_account = ctk.CTkLabel(self._frame_main, text=account.get("username")).pack()
-        #profile
-        self.lbl_profiles = ctk.CTkLabel(self._frame_main, text="profiles").pack()
-        #profile buttons
-        for i in range(len(account.get("profiles"))):
-            if account.get("profiles")[i] == self.acc_man.get_active_profile():
-                ctk.CTkButton(
-                self._frame_main,
-                text=account.get("profiles")[i].get("name"),
-                state="disabled"
-                ).pack()
-            else:
-                ctk.CTkButton(
-                    self._frame_main,
-                    text=account.get("profiles")[i].get("name"),
-                    command=lambda media=i: self.media_clicked(media),
-                ).pack()
-        #plans
-        self.lbl_plan = ctk.CTkLabel(self._frame_main, text="plans").pack()
+        self.lbl_title = ctk.CTkLabel(self._frame_main, text="Your Account", font=("Comic Sans MS", 40))
+        self.lbl_title.grid(row=0,column=0, padx=20,pady=10, columnspan=2)
+        
+        self.lbl_name = ctk.CTkLabel(self._frame_main, text="Username:")
+        self.lbl_name.grid(row=1,column=0, padx=20,pady=20)
+        self.lbl_namedata = ctk.CTkLabel(self._frame_main, text=account.get("username"), font=("Arial Bold", 20))
+        self.lbl_namedata.grid(row=1,column=1, padx=20,pady=20)
+        self.btn_logout = ctk.CTkButton(self._frame_main, width=140, height=50,
+                                        text="Log Out", command=self.click_logout)
+        self.btn_logout.grid(row=1,column=2, padx=20,pady=20, sticky='n')
+        
+        self.lbl_plan = ctk.CTkLabel(self._frame_main, text="Current Plan:")
+        self.lbl_plan.grid(row=2,column=0, pady=10)
+        plan_name = data.plans[account.get("plan")]["name"]
+        self.lbl_plandata = ctk.CTkLabel(self._frame_main, text=plan_name, font=("Arial Bold", 20))
+        self.lbl_plandata.grid(row=2,column=1,padx=20,pady=10)
+        
+        self.lbl_switch_plan = ctk.CTkLabel(self._frame_main, text="switch plan to:")
+        self.lbl_switch_plan.grid(row=3,column=0, pady=(10,5))
+        # plan buttons
         for i in range(len(data.plans)):
+            btn_plan = ctk.CTkButton(self._frame_main)
+            btn_plan.grid(row=4, column=i, padx=10,pady=(0,20))
             if account.get("plan") == i:
-                ctk.CTkButton(
-                self._frame_main,
-                text=data.plans[i]["name"],
-                command=lambda plan=i: self.plan_clicked(plan),
-                state="disabled"
-                ).pack()
-            else:
-                ctk.CTkButton(
-                    self._frame_main,
+                btn_plan.configure(
                     text=data.plans[i]["name"],
                     command=lambda plan=i: self.plan_clicked(plan),
-                ).pack()
-
-        # logout
-        self.btn_logout = ctk.CTkButton(self._frame_main, width=70, text="Log Out", command=self.click_logout).pack()
+                    state="disabled"
+                )
+            else:
+                btn_plan.configure(
+                    text=data.plans[i]["name"],
+                    command=lambda plan=i: self.plan_clicked(plan),
+                )
+        #profile
+        self.lbl_profiles = ctk.CTkLabel(self._frame_main, text="Profiles")
+        self.lbl_profiles.grid(row=5,column=0, pady=(10,5))
+        #profile buttons
+        for i in range(len(account.get("profiles"))):
+            text = account.get("profiles")[i].get("name")
+            text = text + f"\n{account.get("profiles")[i].get("age")} years old"
+            btn_profile = ctk.CTkButton(self._frame_main, text=text)
+            btn_profile.grid(row=6, column=i, padx=10,pady=(0,20))
+            if account.get("profiles")[i] == self.acc_man.get_active_profile():
+                btn_profile.configure(state="disabled")
+            else:
+                btn_profile.configure(command=lambda media=i: self.media_clicked(media))
+        
 
     def media_clicked(self, profile):
         self.acc_man.set_profile(profile)
@@ -249,7 +270,7 @@ class HomeScene(Scene):
         
 
     def enter_scene(self):
-        if self.acc_man.current_account != None:
+        if self.acc_man.current_account != None: #presumably the cause of the media card bug
             self.library.ratings_filter = self.acc_man.get_active_profile().get("age")
             self.library.update_visible()
             self._build_list()
@@ -257,9 +278,13 @@ class HomeScene(Scene):
             raise ValueError("Entered homescene without an account")
         
     def _build_list(self):
-        if self._list_frame:
+        print(self.library.visible_list)
+        #
+        if bool(self._list_frame):
+            self._list_frame.pack_forget()
             self._list_frame.destroy() # to reset the frame
         self._list_frame = ctk.CTkFrame(self._scroll_frame, width=1008, height=500)
+        self._list_frame.pack()
 
         card_count = 0
         ctk.CTkLabel(self._list_frame, text="test")
@@ -272,7 +297,7 @@ class HomeScene(Scene):
             media_card = ctk.CTkFrame(self._list_frame, width=336, height=240)
             media_card.grid(row = card_count//3, column = card_count % 3)
 
-            # watch button
+            # watch button and thumbnail
             ctk.CTkButton(
                 media_card,
                 text="",
@@ -283,25 +308,30 @@ class HomeScene(Scene):
                 command=lambda media_index=index: self.media_clicked(media_index),
             ).pack()
 
-            # add/remove watchlist
-            checked_state = ctk.IntVar(value=0)
-            if index in self.acc_man.get_active_profile().get("watchlist"):
-                checked_state = ctk.IntVar(value=1)
-            ctk.CTkCheckBox(media_card, text="Watchlist", variable=checked_state, 
-                command=lambda media_index=index: self.watchlist_clicked(media_index)).pack()
+            # checkbox to add/remove from watchlist
+            value = bool(index in self.acc_man.get_active_profile().get("watchlist"))
+            checkbox = ctk.CTkCheckBox(
+                self._media_card, text="Watchlist", 
+                variable=ctk.IntVar(value=value),
+                command=lambda media_index=index: self.edit_watchlist(media_index))
+            checkbox.pack()
                 
-            # media description
+            # media description label
+            media = self.library.media_list[index]
+            # convert genre numbers to genre names
             genres = []
-            for genre in self.library.media_list[index].genre:
+            for genre in media.genre:
                 genres.append(data.genres[genre])
+            # format info as text
             text = f"""\
-{self.library.media_list[index].title}
-{self.library.media_list[index].rating} or above only
+{media.title}
+{media.rating} or above only
 {', '.join(genres)}"""
             
             ctk.CTkLabel(media_card,text=text,).pack()
             card_count += 1
-        self._list_frame.pack()
+            print(self._media_card)
+            
 
 
     def _build_main(self):
@@ -313,12 +343,13 @@ class HomeScene(Scene):
         self._filter_frame.pack()
 
         self._watchlist_switch = ctk.CTkSwitch(self._filter_frame, text="Watchlist",
-            command=self.watchlist_switched).grid(row=0, column=0)
-
-        self._genre_filter = ctk.CTkComboBox(self._filter_frame, values=["Filter by Catagory"] + data.genre_list,
-            command=self.category_combo).grid(row=0, column=1)
+            command=self.toggle_watchlist).grid(row=0, column=0)
         
-        self._scroll_frame.pack()
+        self._genre_filter = ctk.CTkComboBox(self._filter_frame,
+                                             values=["Filter by Category"]+data.genre_list,
+                                             command=self.category_combo
+                                             ).grid(row=0, column=1)
+        #self._build_list()  ### removing this temporarily fixes the media card bug (for one render)
         
 
     def media_clicked(self, media_id):
@@ -332,27 +363,29 @@ class HomeScene(Scene):
             self.acc_man.get_active_profile().watchlist.pop(index)
         self.app.switch_scene(self.app.VIEW)
 
-    def watchlist_clicked(self, media_id):
+    def edit_watchlist(self, media_id):
         # toggles profile watchlist bool for this media
+        # aka adds/removes this media in watchlist
         if media_id not in self.acc_man.get_active_profile().get("watchlist"):
             self.acc_man.get_active_profile().watchlist.append(media_id)
         else:
             index = self.acc_man.get_active_profile().get("watchlist").index(media_id)
             self.acc_man.get_active_profile().watchlist.pop(index)
+            # if currently viewing watchlist, refresh watchlist
             if self.library.is_watchlist:
                 self.library.update_visible()
                 self._build_list()
 
     def category_combo(self, value):
         # updates genre filter
-        if value == "Filter by Catagory":
+        if value == "Filter by Category":
             self.library.genre_filter = None
         else:
             self.library.genre_filter = data.genre_list.index(value)
         self.library.update_visible()
         self._build_list()
 
-    def watchlist_switched(self):
+    def toggle_watchlist(self):
         # toggles watchlist state
         self.library.is_watchlist = not self.library.is_watchlist
         self.library.update_visible()
