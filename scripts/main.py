@@ -41,19 +41,21 @@ class StreamingApp(ctk.CTk):
         self.switch_scene(self.LOGIN)
 
     # basically just a state machine
-    def switch_scene(self, scene_id):
+    def switch_scene(self, new_id):
         # currently scenes must use pack() to build
-        # initial case
-        if self.current_scene != self.NONE:
-            self.scenes[self.current_scene].exit_scene()
-            self.scenes[self.current_scene].pack_forget()
-        #adds new scene to cached list
-        if scene_id not in self.cached_scenes:
-            self.cached_scenes.append(scene_id)
-            self.scenes[scene_id].build_frame()
-        self.scenes[scene_id].enter_scene()
-        self.scenes[scene_id].pack(expand=True, fill=ctk.BOTH)
-        self.current_scene = scene_id
+        # unload and hide previous scene - but it still exists and is in cached list
+        prev_id = self.current_scene
+        if prev_id != self.NONE:
+            self.scenes[prev_id].exit_scene()
+            self.scenes[prev_id].pack_forget()
+        # if a new scene, build it and add to cached list
+        if new_id not in self.cached_scenes:
+            self.cached_scenes.append(new_id)
+            self.scenes[new_id].build_frame()
+        # prepare scene and display it in the window
+        self.scenes[new_id].enter_scene()
+        self.scenes[new_id].pack(expand=True, fill=ctk.BOTH)
+        self.current_scene = new_id
 
     def exit_app(self):
          if tk.messagebox.askyesno("Confirm", "Exit GexVideos?"):

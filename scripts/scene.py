@@ -255,7 +255,7 @@ class HomeScene(Scene):
         
 
     def enter_scene(self):
-        if self.acc_man.current_account != {}:
+        if self.acc_man.current_account != None: #presumably the cause of the media card bug
             self.library.ratings_filter = self.acc_man.get_active_profile().get("age")
             self.library.update_visible()
             self._build_list()
@@ -263,10 +263,15 @@ class HomeScene(Scene):
             raise ValueError("Entered homescene without an account")
         
     def _build_list(self):
-        if self._list_frame:
+        print(self.library.visible_list)
+        #
+        if bool(self._list_frame):
+            self._list_frame.pack_forget()
             self._list_frame.destroy() # to reset the frame
         self._list_frame = ctk.CTkScrollableFrame(self._frame_main, width=1008, height=700)
-
+        self._list_frame.pack()
+        
+        # build the media cards in the list frame
         card_count = 0
         for index in self.library.visible_list:
             # In the future adding a way to cache cards or image lables would help
@@ -277,7 +282,7 @@ class HomeScene(Scene):
             self._media_card = ctk.CTkFrame(self._list_frame, width=336, height=240)
             self._media_card.grid(row = card_count//3, column = card_count % 3)
 
-            # watch button
+            # watch button and thumbnail
             ctk.CTkButton(
                 self._media_card,
                 text="",
@@ -288,25 +293,30 @@ class HomeScene(Scene):
                 command=lambda media_index=index: self.media_clicked(media_index),
             ).pack()
 
-            # add/remove watchlist
-            checked_state = ctk.IntVar(value=0)
-            if index in self.acc_man.get_active_profile().get("watchlist"):
-                checked_state = ctk.IntVar(value=1)
-            ctk.CTkCheckBox(self._media_card, text="Watchlist", variable=checked_state, 
-                command=lambda media_index=index: self.watchlist_clicked(media_index)).pack()
+            # checkbox to add/remove from watchlist
+            value = bool(index in self.acc_man.get_active_profile().get("watchlist"))
+            checkbox = ctk.CTkCheckBox(
+                self._media_card, text="Watchlist", 
+                variable=ctk.IntVar(value=value),
+                command=lambda media_index=index: self.edit_watchlist(media_index))
+            checkbox.pack()
                 
-            # media description
+            # media description label
+            media = self.library.media_list[index]
+            # convert genre numbers to genre names
             genres = []
-            for genre in self.library.media_list[index].genre:
+            for genre in media.genre:
                 genres.append(data.genres[genre])
+            # format info as text
             text = f"""\
-{self.library.media_list[index].title}
-{self.library.media_list[index].rating} or above only
+{media.title}
+{media.rating} or above only
 {', '.join(genres)}"""
-            
             ctk.CTkLabel(self._media_card,text=text,).pack()
+            
             card_count += 1
-        self._list_frame.pack()
+            print(self._media_card)
+            
 
 
     def _build_main(self):
@@ -318,13 +328,13 @@ class HomeScene(Scene):
         self._filter_frame.pack()
 
         self._watchlist_switch = ctk.CTkSwitch(self._filter_frame, text="Watchlist",
-            command=self.watchlist_switched).grid(row=0, column=0)
+            command=self.toggle_watchlist).grid(row=0, column=0)
         
         self._genre_filter = ctk.CTkComboBox(self._filter_frame,
                                              values=["Filter by Category"]+data.genre_list,
                                              command=self.category_combo
                                              ).grid(row=0, column=1)
-        self._build_list()
+        #self._build_list()  ### removing this temporarily fixes the media card bug (for one render)
         
 
     def media_clicked(self, media_id):
@@ -338,13 +348,15 @@ class HomeScene(Scene):
             self.acc_man.get_active_profile().watchlist.pop(index)
         self.app.switch_scene(self.app.VIEW)
 
-    def watchlist_clicked(self, media_id):
+    def edit_watchlist(self, media_id):
         # toggles profile watchlist bool for this media
+        # aka adds/removes this media in watchlist
         if media_id not in self.acc_man.get_active_profile().get("watchlist"):
             self.acc_man.get_active_profile().watchlist.append(media_id)
         else:
             index = self.acc_man.get_active_profile().get("watchlist").index(media_id)
             self.acc_man.get_active_profile().watchlist.pop(index)
+            # if currently viewing watchlist, refresh watchlist
             if self.library.is_watchlist:
                 self.library.update_visible()
                 self._build_list()
@@ -358,7 +370,7 @@ class HomeScene(Scene):
         self.library.update_visible()
         self._build_list()
 
-    def watchlist_switched(self):
+    def toggle_watchlist(self):
         # toggles watchlist state
         self.library.is_watchlist = not self.library.is_watchlist
         self.library.update_visible()
