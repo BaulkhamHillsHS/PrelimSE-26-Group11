@@ -25,7 +25,12 @@ def validate_password(token: bytes, password: str):
 """ Original passwords
 print(encrypt("1234567890".encode()))
 print(encrypt("1234567890".encode()))
-print(encrypt("a".encode()))
+print(encrypt("You will fail worthless lizard".encode()))
 print(encrypt("Baulko11!!".encode()))
 print(encrypt("Append".encode()))
+print(encrypt("password".encode()))
+print(encrypt("gotta go fast".encode()))
+print(encrypt("sugar, spice, and everything nice".encode()))
+print(encrypt("Oh! Banana.".encode()))
+print(encrypt("better".encode()))
 """
