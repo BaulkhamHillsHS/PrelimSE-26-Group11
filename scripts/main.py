@@ -26,7 +26,8 @@ class StreamingApp(ctk.CTk):
         self.library = utils.Library(self.account_manager)
 
         self.title("GEX VIDEOS Streaming App Jeremy Guillermo")
-        self.geometry("1024x576")
+        self.geometry("1280x720")
+        self.resizable(False, False)
         self.current_scene = self.NONE
 
         self.scenes: dict[int, scene.Scene] = {

@@ -50,8 +50,18 @@ rating_names = {G : "G", PG : "PG", M : "M", MA : "MA", R : "R", X : "X"}
 # Subscription Types
 BASE_PLAN = 0
 PREMIUM_PLAN = 1
-plans = [{"name" : "Basic Plan", "price": 9.99}, 
-        {"name" : "Premium Plan", "price": 19.99}]
+plans = [
+    {
+        "name" : "Basic Plan", 
+        "price": 9.99,
+        "desc" : "480p Quality streaming\nContains Ads\n$9.99 / Month"
+    }, 
+    {
+        "name" : "Premium Plan", 
+        "price": 19.99,
+        "desc" : "1080p Quality streaming\nContains less Ads\n$19.99 / Month"
+    }
+]
 
 
 media = [
