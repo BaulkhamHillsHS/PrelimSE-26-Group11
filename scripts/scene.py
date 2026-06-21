@@ -129,7 +129,14 @@ class LoginScene(Scene):
 class OpeningProfileScene(Scene):
     def __init__(self, master, account_manager):
         self.acc_man = account_manager
+        self.prev_account = None
         super().__init__(master)
+
+    # resets scene if there is a new account
+    def enter_scene(self):
+        if self.acc_man.get_current_index() != self.prev_account:
+            self._frame_main.destroy()
+            self._build_main()
 
     def _build_main(self):
         # currently builds a pack of labels with different metadata
@@ -163,9 +170,11 @@ class AccountScene(Scene):
         self._frame_main = None
         super().__init__(master)
 
+    # resets scene if there is a new account
     def enter_scene(self):
         if self.acc_man.get_current_index() != self.prev_account:
-            pass
+            self._frame_main.destroy()
+            self._build_main()
 
     def _build_main(self):
         # currently builds a pack of labels with different metadata
