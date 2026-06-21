@@ -503,19 +503,36 @@ media = [
 class Media:
     def __init__(self, id: int):
 
-        self.id = id
-        self.title = media[id]["title"]
-        self.display_path = media[id]["display_path"]
-        self.thumbnail = ctk.CTkImage(light_image=Image.open(media[id]["thumbnail"]), size=(320, 180))
-        self.rating = media[id]["rating"]
-        self.genre = media[id]["genre"]
-        self.type = media[id]["type"]
+        self._id = id
+        self._title = media[id]["title"]
+        self._display_path = media[id]["display_path"]
+        self._thumbnail = ctk.CTkImage(light_image=Image.open(media[id]["thumbnail"]), size=(320, 180))
+        self._rating = media[id]["rating"]
+        self._genre = media[id]["genre"]
+        self._type = media[id]["type"]
 
+    def get(self, property):
+        match property:
+            case "id":
+                return self._id
+            case "title":
+                return self._title
+            case "display_path":
+                return self._display_path
+            case "thumbnail":
+                return self._thumbnail
+            case "rating":
+                return self._rating
+            case "genre":
+                return self._genre
+            case "type":
+                return self._type
+      
 
 class Movie(Media):
     def __init__(self, id):
         super().__init__(id)
-        self.display = ctk.CTkImage(light_image=Image.open(self.display_path), size=(640, 360))
+        self.display = ctk.CTkImage(light_image=Image.open(self._display_path), size=(640, 360))
 
 
 class Show(Media):
@@ -524,5 +541,5 @@ class Show(Media):
         # these currently are just place holders as viewing individual episodes is
         # not in the scope of this project
         self.display_list = []
-        for path in self.display_path:
+        for path in self._display_path:
             self.display_list.append(ctk.CTkImage(light_image=Image.open(path), size=(640, 360)))
